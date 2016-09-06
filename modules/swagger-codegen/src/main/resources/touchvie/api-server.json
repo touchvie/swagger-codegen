@@ -1,0 +1,496 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Touchvie API",
+        "description": "Touchvie API description",
+        "version": "1.0.0"
+    },
+    "host": "api1.touchvie.com",
+    "schemes": [
+        "https"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/movies/{movie_id_list}/ready": {
+            "get": {
+                "summary": "Check if a list of movies are available on Touchvie API.",
+                "description": "This endpoint allows to check if a list of movies are available to be synchronized using Touchvie API. At least one movie should be provided.",
+                "parameters": [
+                    {
+                        "name": "movie_id_list",
+                        "in": "path",
+                        "description": "List of movie IDs (internal client IDs). The ID's should be provided as a comma separated list.",
+                        "required": true,
+                        "type": "array",
+                        "collectionFormat": "csv",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/MovieReady"
+                            }
+                        },
+                        "examples": {
+                            "application/json": [
+                                {
+                                    "movie_id": "1234567890",
+                                    "ready": true
+                                },
+                                {
+                                    "movie_id": "0987654321",
+                                    "ready": false
+                                }
+                            ]
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable"
+                    }
+                }
+            }
+        },
+        "/movies/{movie_id}/static/{timestamp}": {
+            "get": {
+                "summary": "Retrieves the information synchronized with the movie.",
+                "description": "Retrieves the information synchronized with the movie.",
+                "parameters": [
+                    {
+                        "name": "movie_id",
+                        "in": "path",
+                        "description": "ID of the movie (internal client ID) to be synchronized.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "timestamp",
+                        "in": "path",
+                        "description": "Timestamp of the movie being synchronized. The timestamp represents the number of seconds since the begining of the movie. Allows decimal values. \"105.56\" is a valid value.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "relations",
+                        "in": "query",
+                        "description": "Defines if the response of the synchronization server should include card relations. Default \"false\".",
+                        "required": false,
+                        "type": "boolean",
+                        "enum": [
+                            true,
+                            false
+                        ]
+                    },
+                    {
+                        "name": "image_size",
+                        "in": "query",
+                        "description": "Size of the images to be returned by the synchronization server. Default \"m\".",
+                        "required": false,
+                        "type": "string",
+                        "enum": [
+                            "s",
+                            "m",
+                            "l"
+                        ]
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/StaticCard"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "card_id": "abcd123456782141242332",
+                                "type": "FASHION",
+                                "title": "Card title",
+                                "subtitle": "Card subtitle",
+                                "image": "https://card.touchvie.com/abcd123456782141242332/abcd123456782141242332_m.jpg",
+                                "anchor_x": 50,
+                                "anchor_y": 50,
+                                "relations": [
+                                    {
+                                        "card_id": "1234567981234abcd",
+                                        "type": "CURIOSITY",
+                                        "title": "Related card title",
+                                        "subtitle": "Related card subtitle",
+                                        "image": "https://card.touchvie.com/1234567981234abcd/1234567981234abcd_m.jpg",
+                                        "anchor_x": 75,
+                                        "anchor_y": 20
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable"
+                    }
+                }
+            }
+        },
+        "/movies/{movie_id}/dynamic/{timestamp}": {
+            "get": {
+                "summary": "Retrieves the information of a dynamic Touchvie information server.",
+                "description": "Retrieves the information of a dynamic Touchvie information server.",
+                "parameters": [
+                    {
+                        "name": "movie_id",
+                        "in": "path",
+                        "description": "ID of the movie (internal client ID) to be synchronized.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "timestamp",
+                        "in": "path",
+                        "description": "Timestamp of the movie being synchronized. The timestamp represents the number of seconds since the begining of the movie. Allows decimal values. \"105.56\" is a valid value.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "relations",
+                        "in": "query",
+                        "description": "Defines if the response of the synchronization server should include card relations. Default \"false\".",
+                        "required": false,
+                        "type": "boolean",
+                        "enum": [
+                            true,
+                            false
+                        ]
+                    },
+                    {
+                        "name": "image_size",
+                        "in": "query",
+                        "description": "Size of the images to be returned by the synchronization server. Default \"m\".",
+                        "required": false,
+                        "type": "string",
+                        "enum": [
+                            "s",
+                            "m",
+                            "l"
+                        ]
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/DynamicServer"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "hostname": "234.45.65.45",
+                                "port": 3001,
+                                "channel": "abcd123456782141242332"
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable"
+                    }
+                }
+            }
+        },
+        "/channels/{channel_id_list}/ready": {
+            "get": {
+                "summary": "Check if a list of channels are available to be synchronized.",
+                "description": "This endpoint allows to check if a list of channels are available to be synchronized at a given time using Touchvie API. At least one channel should be provided.",
+                "parameters": [
+                    {
+                        "name": "channel_id_list",
+                        "in": "path",
+                        "description": "List of channel IDs (internal client IDs). The ID's should be provided as a comma separated list.",
+                        "required": true,
+                        "type": "array",
+                        "collectionFormat": "csv",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ChannelReady"
+                            }
+                        },
+                        "examples": {
+                            "application/json": [
+                                {
+                                    "channel_id": "1",
+                                    "ready": true
+                                },
+                                {
+                                    "channel_id": "12",
+                                    "ready": false
+                                }
+                            ]
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable"
+                    }
+                }
+            }
+        },
+        "/channels/{channel_id}/dynamic": {
+            "get": {
+                "summary": "Retrieves the information of a dynamic Touchvie information server.",
+                "description": "Retrieves the information of a dynamic Touchvie information server.",
+                "parameters": [
+                    {
+                        "name": "channel_id",
+                        "in": "path",
+                        "description": "ID of the channel to synchronize.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "relations",
+                        "in": "query",
+                        "description": "Defines if the response of the synchronization server should include card relations. Default \"false\".",
+                        "required": false,
+                        "type": "boolean",
+                        "enum": [
+                            true,
+                            false
+                        ]
+                    },
+                    {
+                        "name": "image_size",
+                        "in": "query",
+                        "description": "Size of the images to be returned by the synchronization server. Default \"m\".",
+                        "required": false,
+                        "type": "string",
+                        "enum": [
+                            "s",
+                            "m",
+                            "l"
+                        ]
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/DynamicServer"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "hostname": "234.45.65.45",
+                                "port": 3001,
+                                "channel": "abcd123456782141242332"
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable"
+                    }
+                }
+            }
+        },
+        "/cards/{card_id}": {
+            "get": {
+                "summary": "Retrieves the information of Touchvie card.",
+                "description": "Retrieves the information of Touchvie card.",
+                "parameters": [
+                    {
+                        "name": "card_id",
+                        "in": "path",
+                        "description": "ID of the card to retrieve.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "relations",
+                        "in": "query",
+                        "description": "Defines if the response of the synchronization server should include card relations. Default \"true\".",
+                        "required": false,
+                        "type": "boolean",
+                        "enum": [
+                            true,
+                            false
+                        ]
+                    },
+                    {
+                        "name": "image_size",
+                        "in": "query",
+                        "description": "Size of the images to be returned by the synchronization server. Default \"m\".",
+                        "required": false,
+                        "type": "string",
+                        "enum": [
+                            "s",
+                            "m",
+                            "l"
+                        ]
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/CardDetail"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "hostname": "234.45.65.45",
+                                "port": 3001,
+                                "channel": "abcd123456782141242332"
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "MovieReady": {
+            "properties": {
+                "movie_id": {
+                    "type": "string",
+                    "description": "The movie ID provided in the request."
+                },
+                "ready": {
+                    "type": "boolean",
+                    "description": "True if the movie is ready, False otherwise."
+                }
+            }
+        },
+        "ChannelReady": {
+            "properties": {
+                "channel_id": {
+                    "type": "string",
+                    "description": "The channel ID provided in the request."
+                },
+                "ready": {
+                    "type": "boolean",
+                    "description": "True if the movie is ready, False otherwise."
+                }
+            }
+        },
+        "DynamicServer": {
+            "properties": {
+                "hostname": {
+                    "type": "string",
+                    "description": "The hostname of the dynamic information server."
+                },
+                "port": {
+                    "type": "number",
+                    "description": "The port of the dynamic information server."
+                },
+                "channel": {
+                    "type": "string",
+                    "description": "The channel on the dynamic information server to be used."
+                }
+            }
+        },
+        "CardRelations": {
+            "properties": {
+                "rel_type": {
+                    "type": "string",
+                    "description": "Type of the relation between the parent and the related card."
+                },
+                "cards": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/StaticCard"
+                    },
+                    "description": "Related cards (childrens)"
+                }
+            }
+        },
+        "StaticCard": {
+            "properties": {
+                "card_id": {
+                    "type": "string",
+                    "description": "The ID of the card."
+                },
+                "type": {
+                    "type": "string",
+                    "description": "The type of the card."
+                },
+                "title": {
+                    "type": "string",
+                    "description": "Title of the card."
+                },
+                "subtitle": {
+                    "type": "string",
+                    "description": "Subtitle of the card."
+                },
+                "image": {
+                    "type": "string",
+                    "description": "Image of the card."
+                },
+                "anchor_x": {
+                    "type": "number",
+                    "description": "Anchor in X axis. Value in range [0, 100]."
+                },
+                "anchor_y": {
+                    "type": "number",
+                    "description": "Anchor in Y axis. Value in range [0, 100]."
+                },
+                "relations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/CardRelations"
+                    }
+                }
+            }
+        },
+        "CardDetail": {
+            "properties": {
+                "type": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string",
+                    "description": "Title of the card."
+                },
+                "subtitle": {
+                    "type": "string",
+                    "description": "Subtitle of the card."
+                },
+                "image": {
+                    "type": "string",
+                    "description": "Image of the card."
+                },
+                "anchor_x": {
+                    "type": "number",
+                    "description": "Anchor in X axis. Value in range [0, 100]."
+                },
+                "anchor_y": {
+                    "type": "number",
+                    "description": "Anchor in Y axis. Value in range [0, 100]."
+                },
+                "share_url": {
+                    "type": "string",
+                    "description": "URL that should be used when is needed to share the information with others (social networks, apps, etc)."
+                },
+                "containers": {
+                    "type": "array",
+                    "items": {
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
