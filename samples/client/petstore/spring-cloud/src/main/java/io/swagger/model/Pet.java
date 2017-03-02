@@ -10,13 +10,11 @@ import io.swagger.model.Category;
 import io.swagger.model.Tag;
 import java.util.ArrayList;
 import java.util.List;
-
-
-
-
+import javax.validation.constraints.*;
 /**
- * Pet
+ * A pet for sale in the pet store
  */
+@ApiModel(description = "A pet for sale in the pet store")
 
 public class Pet   {
   @JsonProperty("id")
@@ -116,6 +114,7 @@ public class Pet   {
    * @return name
   **/
   @ApiModelProperty(example = "doggie", required = true, value = "")
+  @NotNull
   public String getName() {
     return name;
   }
@@ -139,6 +138,7 @@ public class Pet   {
    * @return photoUrls
   **/
   @ApiModelProperty(required = true, value = "")
+  @NotNull
   public List<String> getPhotoUrls() {
     return photoUrls;
   }

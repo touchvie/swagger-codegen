@@ -15,6 +15,8 @@ Method | HTTP request | Description
 
 To test \&quot;client\&quot; model
 
+To test \&quot;client\&quot; model
+
 ### Example
 ```javascript
 var SwaggerPetstore = require('swagger_petstore');
@@ -90,7 +92,8 @@ var opts = {
   'binary': "B", // String | None
   '_date': new Date("2013-10-20"), // Date | None
   'dateTime': new Date("2013-10-20T19:20:30+01:00"), // Date | None
-  'password': "password_example" // String | None
+  'password': "password_example", // String | None
+  'callback': "callback_example" // String | None
 };
 
 var callback = function(error, data, response) {
@@ -120,6 +123,7 @@ Name | Type | Description  | Notes
  **_date** | **Date**| None | [optional] 
  **dateTime** | **Date**| None | [optional] 
  **password** | **String**| None | [optional] 
+ **callback** | **String**| None | [optional] 
 
 ### Return type
 
@@ -140,6 +144,8 @@ null (empty response body)
 
 To test enum parameters
 
+To test enum parameters
+
 ### Example
 ```javascript
 var SwaggerPetstore = require('swagger_petstore');
@@ -153,7 +159,7 @@ var opts = {
   'enumHeaderString': "-efg", // String | Header parameter enum test (string)
   'enumQueryStringArray': ["enumQueryStringArray_example"], // [String] | Query parameter enum test (string array)
   'enumQueryString': "-efg", // String | Query parameter enum test (string)
-  'enumQueryInteger': 3.4, // Number | Query parameter enum test (double)
+  'enumQueryInteger': 56, // Number | Query parameter enum test (double)
   'enumQueryDouble': 1.2 // Number | Query parameter enum test (double)
 };
 
@@ -190,6 +196,6 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
- - **Accept**: application/json
+ - **Content-Type**: */*
+ - **Accept**: */*
 

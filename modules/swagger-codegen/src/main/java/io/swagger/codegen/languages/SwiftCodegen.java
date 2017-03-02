@@ -101,6 +101,10 @@ public class SwiftCodegen extends DefaultCodegen implements CodegenConfig {
                 );
         reservedWords = new HashSet<String>(
                 Arrays.asList(
+                    // name used by swift client
+                    "ErrorResponse",
+
+                    // swift keywords
                     "Int", "Int32", "Int64", "Int64", "Float", "Double", "Bool", "Void", "String", "Character", "AnyObject",
                     "class", "Class", "break", "as", "associativity", "deinit", "case", "dynamicType", "convenience", "enum", "continue",
                     "false", "dynamic", "extension", "default", "is", "didSet", "func", "do", "nil", "final", "import", "else",
@@ -167,7 +171,7 @@ public class SwiftCodegen extends DefaultCodegen implements CodegenConfig {
             additionalProperties.put(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
         } else {
             additionalProperties.put(CodegenConstants.HIDE_GENERATION_TIMESTAMP,
-                    Boolean.valueOf((String)additionalProperties().get(CodegenConstants.HIDE_GENERATION_TIMESTAMP).toString()));
+                    Boolean.valueOf(additionalProperties().get(CodegenConstants.HIDE_GENERATION_TIMESTAMP).toString()));
         }
 
         // Setup project name
@@ -228,11 +232,14 @@ public class SwiftCodegen extends DefaultCodegen implements CodegenConfig {
     protected boolean isReservedWord(String word) {
         return word != null && reservedWords.contains(word); //don't lowercase as super does
     }
-
+    
     @Override
-    public String escapeReservedWord(String name) {
-        return "_" + name;  // add an underscore to the name
-    }
+    public String escapeReservedWord(String name) {           
+        if(this.reservedWordsMappings().containsKey(name)) {
+            return this.reservedWordsMappings().get(name);
+        }
+        return "_" + name; // add an underscore to the name
+    }    
 
     @Override
     public String modelFileFolder() {
@@ -384,12 +391,24 @@ public class SwiftCodegen extends DefaultCodegen implements CodegenConfig {
 
     @SuppressWarnings("static-method")
     public String toSwiftyEnumName(String value) {
+        if (value.length() == 0) {
+            return "Empty";
+        }
+
+        if (value.matches("^-?\\d*\\.{0,1}\\d+.*")) { // starts with number
+            value = "Number" + value;
+            value = value.replaceAll("-", "Minus");
+            value = value.replaceAll("\\+", "Plus");
+            value = value.replaceAll("\\.", "Dot");
+        }
+        
         // Prevent from breaking properly cased identifier
         if (value.matches("[A-Z][a-z0-9]+[a-zA-Z0-9]*")) {
             return value;
         }
-        char[] separators = {'-', '_', ' ', ':'};
-        return WordUtils.capitalizeFully(StringUtils.lowerCase(value), separators).replaceAll("[-_  :]", "");
+
+        char[] separators = {'-', '_', ' ', ':', '/'};
+        return WordUtils.capitalizeFully(StringUtils.lowerCase(value), separators).replaceAll("[-_  :/]", "");
     }
 
 
@@ -469,14 +488,7 @@ public class SwiftCodegen extends DefaultCodegen implements CodegenConfig {
     @Override
     public CodegenOperation fromOperation(String path, String httpMethod, Operation operation, Map<String, Model> definitions, Swagger swagger) {
         path = normalizePath(path); // FIXME: a parameter should not be assigned. Also declare the methods parameters as 'final'.
-        List<Parameter> parameters = operation.getParameters();
-        parameters = Lists.newArrayList(Iterators.filter(parameters.iterator(), new Predicate<Parameter>() {
-            @Override
-            public boolean apply(@Nullable Parameter parameter) {
-                return !(parameter instanceof HeaderParameter);
-            }
-        }));
-        operation.setParameters(parameters);
+        // issue 3914 - removed logic designed to remove any parameter of type HeaderParameter
         return super.fromOperation(path, httpMethod, operation, definitions, swagger);
     }
 
@@ -538,7 +550,7 @@ public class SwiftCodegen extends DefaultCodegen implements CodegenConfig {
         // TODO: this code is probably useless, because the var name is computed from the value in map.put("enum", toSwiftyEnumName(value));
         // number
         if ("int".equals(datatype) || "double".equals(datatype) || "float".equals(datatype)) {
-            String varName = new String(name);
+            String varName = name;
             varName = varName.replaceAll("-", "MINUS_");
             varName = varName.replaceAll("\\+", "PLUS_");
             varName = varName.replaceAll("\\.", "_DOT_");
