@@ -28,6 +28,7 @@
 
 				"summary": "Token endpoint",
 				"description": "The token endpoint is used to obtain access tokens which allow clients to make API requests",
+				"operationId": "postToken",
 
 				"parameters": [
 					{
@@ -118,7 +119,8 @@
 
 				"summary": "Movie sync availability",
 				"description": "Checks whether a list of client movie identifiers (Video On Demand) are available to be synchronized using the Dive API",
-				
+				"operationId": "getReadyMovies",
+
 				"parameters": [
 					{
 						"$ref": "#/parameters/Authorization"
@@ -180,7 +182,8 @@
 
 				"summary": "One-shot movie scene",
 				"description": "Retrieves the current list of cards related to the given movie scene",
-				
+				"operationId": "getStaticMovieScene",
+
 				"parameters": [
 					{
 						"$ref": "#/parameters/Authorization"
@@ -328,6 +331,7 @@
 
 				"summary": "Channel sync availability",
 				"description": "Checks if a list of client channel identifiers are currently broadcasting synchronizable content",
+				"operationId": "getReadyChannels",
 
 				"parameters": [
 					{
@@ -390,7 +394,8 @@
 
 				"summary": "One-shot channel scene",
 				"description": "Retrieves the list of cards related to the content currently being broadcasted in the provided channel",
-				
+				"operationId": "getStaticChannelScene",
+
 				"parameters": [
 					{
 						"$ref": "#/parameters/Authorization"
@@ -530,7 +535,8 @@
 
 				"summary": "Full card detail",
 				"description": "Retrieves a full card detail, and optionally its relations to other cards",
-				
+				"operationId": "getCardVersion",
+
 				"parameters": [
 					{
 						"$ref": "#/parameters/Authorization"
@@ -718,7 +724,7 @@
 					"type": "string",
 					"description": "Card version for a given movie and scene"
 				},
-				"type": {
+				"typeOfCard": {
 					"type": "string",
 					"description": "Card type",
 					"enum":[
@@ -758,7 +764,7 @@
 			},
 			"required": [
 				"card_id",
-				"type",
+				"typeOfCard",
 				"locale",
 				"title"
 			]
@@ -833,7 +839,7 @@
 			"type": "object",
 			"discriminator": "type",
 			"properties":{
-				"type": {
+				"typeOfContainer": {
 					"type": "string",
 					"description": "Card container format type, determines the format of the 'data' field",
 					"enum":[
@@ -843,7 +849,7 @@
 				}
 			},
 			"required": [
-				"type"
+				"typeOfContainer"
 			]
 		},
 
@@ -1347,7 +1353,7 @@
 			"type": "object",
 			"discriminator": "type",
 			"properties":{
-				"type": {
+				"typeOfRelation": {
 					"type": "string",
 					"description": "Relation module type, defines the contained data structure",
 					"enum":[
@@ -1356,7 +1362,7 @@
 				}
 			},
 			"required": [
-				"type"
+				"typeOfRelation"
 			]
 		},
 
