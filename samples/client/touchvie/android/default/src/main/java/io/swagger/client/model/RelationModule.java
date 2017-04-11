@@ -11,21 +11,21 @@ import com.google.gson.annotations.SerializedName;
 @ApiModel(description = "Relation modules provide lists of cards related to the current one. It's contents depend on the module 'type' attribute")
 public class RelationModule  {
   
-  public enum TypeEnum {
+  public enum TypeOfRelationEnum {
      single,  duple, 
   };
-  @SerializedName("type")
-  private TypeEnum type = null;
+  @SerializedName("typeOfRelation")
+  private TypeOfRelationEnum typeOfRelation = null;
 
   /**
    * Relation module type, defines the contained data structure
    **/
   @ApiModelProperty(required = true, value = "Relation module type, defines the contained data structure")
-  public TypeEnum getType() {
-    return type;
+  public TypeOfRelationEnum getTypeOfRelation() {
+    return typeOfRelation;
   }
-  public void setType(TypeEnum type) {
-    this.type = type;
+  public void setTypeOfRelation(TypeOfRelationEnum typeOfRelation) {
+    this.typeOfRelation = typeOfRelation;
   }
 
 
@@ -38,13 +38,13 @@ public class RelationModule  {
       return false;
     }
     RelationModule relationModule = (RelationModule) o;
-    return (this.type == null ? relationModule.type == null : this.type.equals(relationModule.type));
+    return (this.typeOfRelation == null ? relationModule.typeOfRelation == null : this.typeOfRelation.equals(relationModule.typeOfRelation));
   }
 
   @Override
   public int hashCode() {
     int result = 17;
-    result = 31 * result + (type == null ? 0: type.hashCode());
+    result = 31 * result + (typeOfRelation == null ? 0: typeOfRelation.hashCode());
     return result;
   }
 
@@ -53,7 +53,7 @@ public class RelationModule  {
     StringBuilder sb = new StringBuilder();
     sb.append("class RelationModule {\n");
     
-    sb.append("  type: ").append(type).append("\n");
+    sb.append("  typeOfRelation: ").append(typeOfRelation).append("\n");
     sb.append("}\n");
     return sb.toString();
   }

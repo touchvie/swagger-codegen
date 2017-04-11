@@ -72,10 +72,10 @@ public class DefaultApiExample {
         Boolean relations = false; // Boolean | Indicates if the received scene cards should contain the scene hierarchy (true) or be a flat list of the main scene items (false)
         String imageSize = "m"; // String | Size of the images returned in the response
         try {
-            Card result = apiInstance.cardsCardIdVersionsVersionGet(authorization, cardId, version, acceptLanguage, contentType, relations, imageSize);
+            Card result = apiInstance.getCardVersion(authorization, cardId, version, acceptLanguage, contentType, relations, imageSize);
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#cardsCardIdVersionsVersionGet");
+            System.err.println("Exception when calling DefaultApi#getCardVersion");
             e.printStackTrace();
         }
     }
@@ -89,12 +89,12 @@ All URIs are relative to *https://pre-api.touchvie.com/v1*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*DefaultApi* | [**cardsCardIdVersionsVersionGet**](docs/DefaultApi.md#cardsCardIdVersionsVersionGet) | **GET** /cards/{card_id}/versions/{version} | Full card detail
-*DefaultApi* | [**channelsChannelIdListReadyGet**](docs/DefaultApi.md#channelsChannelIdListReadyGet) | **GET** /channels/{channel_id_list}/ready | Channel sync availability
-*DefaultApi* | [**channelsChannelIdStaticGet**](docs/DefaultApi.md#channelsChannelIdStaticGet) | **GET** /channels/{channel_id}/static | One-shot channel scene
-*DefaultApi* | [**moviesClientMovieIdListReadyGet**](docs/DefaultApi.md#moviesClientMovieIdListReadyGet) | **GET** /movies/{client_movie_id_list}/ready | Movie sync availability
-*DefaultApi* | [**moviesClientMovieIdStaticTimestampGet**](docs/DefaultApi.md#moviesClientMovieIdStaticTimestampGet) | **GET** /movies/{client_movie_id}/static/{timestamp} | One-shot movie scene
-*DefaultApi* | [**tokenPost**](docs/DefaultApi.md#tokenPost) | **POST** /token | Token endpoint
+*DefaultApi* | [**getCardVersion**](docs/DefaultApi.md#getCardVersion) | **GET** /cards/{card_id}/versions/{version} | Full card detail
+*DefaultApi* | [**getReadyChannels**](docs/DefaultApi.md#getReadyChannels) | **GET** /channels/{channel_id_list}/ready | Channel sync availability
+*DefaultApi* | [**getReadyMovies**](docs/DefaultApi.md#getReadyMovies) | **GET** /movies/{client_movie_id_list}/ready | Movie sync availability
+*DefaultApi* | [**getStaticChannelScene**](docs/DefaultApi.md#getStaticChannelScene) | **GET** /channels/{channel_id}/static | One-shot channel scene
+*DefaultApi* | [**getStaticMovieScene**](docs/DefaultApi.md#getStaticMovieScene) | **GET** /movies/{client_movie_id}/static/{timestamp} | One-shot movie scene
+*DefaultApi* | [**postToken**](docs/DefaultApi.md#postToken) | **POST** /token | Token endpoint
 
 
 ## Documentation for Models

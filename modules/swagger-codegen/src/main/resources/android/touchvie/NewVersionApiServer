@@ -1,0 +1,1516 @@
+{
+	"swagger": "2.0",
+
+	"info": {
+		"title": "Dive API",
+		"description": "This is the Dive third party API official documentation",
+		"version": "1.0.0"
+	},
+
+	"host": "pre-api.touchvie.com",
+	"basePath": "/v1",
+	"schemes": [
+		"https"
+	],
+
+	"produces": [
+		"application/json"
+	],
+	"consumes": [
+		"application/json"
+	],
+
+	"paths": {
+
+		"/token": {
+
+			"post": {
+
+				"summary": "Token endpoint",
+				"description": "The token endpoint is used to obtain access tokens which allow clients to make API requests",
+				"operationId": "postToken",
+
+				"parameters": [
+					{
+						"$ref": "#/parameters/BasicAuthorization"
+					},
+					{
+						"$ref": "#/parameters/AcceptLanguage"
+					},
+					{
+						"$ref": "#/parameters/ContentType"
+					},
+					{
+						"name": "grant_type",
+						"in": "query",
+						"description": "Grant type used to obtain the token.",
+						"required": true,
+						"type": "string",
+						"enum": [
+							"device_credentials", "refresh_token"
+						]
+					},
+					{
+						"name": "device_id",
+						"in": "formData",
+						"description": "Device identifier, must uniquely identify the user or device accessing the API. Required only for \"device_credentials\" grant type",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "refresh_token",
+						"in": "formData",
+						"description": "Refresh token, used to issue a new token without resending client credentials. Required only for \"refresh_token\" grant type",
+						"required": false,
+						"type": "string"
+					}
+				],
+
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/AccessToken"
+						},
+						"examples": {
+							"application/json": {
+								"access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiYXBpLXNlcnZlciIsIm9hdXRoLXNlcnZlciJdLCJkZXZpY2VfaWQiOiJ0ZXN0X2RldmljZSIsImdyYW50X3R5cGUiOiJkZXZpY2VfY3JlZGVudGlhbHMiLCJzY29wZSI6WyJ0ZXN0Il0sImV4cCI6MTQ2OTE3OTgxNSwiYXV0aG9yaXRpZXMiOlsiUk9MRV9ERVZJQ0UiXSwianRpIjoiYjlkMzk2ZDYtOTQzNi00OTgzLWFlZGUtZTRkZjEwMzUzNjVlIiwiY2xpZW50X2lkIjoidGVzdF9jbGllbnQifQ.lLWJcrX1JxVRaTNnzz3GqbYYkxFLpZBNS-if47aHuiU",
+								"token_type": "bearer",
+								"refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiYXBpLXNlcnZlciIsIm9hdXRoLXNlcnZlciJdLCJkZXZpY2VfaWQiOiJ0ZXN0X2RldmljZSIsImdyYW50X3R5cGUiOiJkZXZpY2VfY3JlZGVudGlhbHMiLCJzY29wZSI6WyJjYXJkcyJdLCJhdGkiOiJiOWQzOTZkNi05NDM2LTQ5ODMtYWVkZS1lNGRmMTAzNTM2NWUiLCJleHAiOjE0NjkxODc5MDQsImF1dGhvcml0aWVzIjpbIlJPTEVfREVWSUNFIl0sImp0aSI6ImQzYmM4MjRkLWI4MmEtNDBkYi04MWRkLTM3YzIyZTY3YTkzNyIsImNsaWVudF9pZCI6InRlc3RfY2xpZW50In0.t-eb0HLD_xHx89sY_-k7hZ8xAT5Ewtwd2EsJDf9pkI0",
+								"expires_in": 900,
+								"scope": "device"
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"schema": {
+							"$ref": "#/definitions/AuthError"
+						},
+						"examples": {
+							"application/json": {
+								"error": "unsupported_grant_type",
+								"error_description": "Unsupported grant type"
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"schema": {
+							"$ref": "#/definitions/AuthError"
+						},
+						"examples": {
+							"application/json": {
+								"error": "invalid_client",
+								"error_description": "Bad client credentials"
+							}
+						}
+					},
+					"503": {
+						"description": "Service Unavailable"
+					}
+				}
+			}
+		},
+
+		"/movies/{client_movie_id_list}/ready": {
+
+			"get": {
+
+				"summary": "Movie sync availability",
+				"description": "Checks whether a list of client movie identifiers (Video On Demand) are available to be synchronized using the Dive API",
+				"operationId": "getReadyMovies",
+
+				"parameters": [
+					{
+						"$ref": "#/parameters/Authorization"
+					},
+					{
+						"$ref": "#/parameters/AcceptLanguage"
+					},
+					{
+						"$ref": "#/parameters/ContentType"
+					},
+					{
+						"name": "client_movie_id_list",
+						"in": "path",
+						"description": "List of client movie IDs, provided as a comma separated list",
+						"required": true,
+						"type": "array",
+						"collectionFormat": "csv",
+						"items": {
+							"type": "string"
+						}
+					}
+				],
+
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/MovieStatus"
+							}
+						},
+						"examples": {
+							"application/json": [
+								{
+									"movie_id": "57393675",
+									"ready": true
+								},
+								{
+									"movie_id": "80443833",
+									"ready": false
+								}
+							]
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					},
+					"503": {
+						"description": "Service Unavailable"
+					}
+				}
+			}
+		},
+
+		"/movies/{client_movie_id}/static/{timestamp}": {
+
+			"get": {
+
+				"summary": "One-shot movie scene",
+				"description": "Retrieves the current list of cards related to the given movie scene",
+				"operationId": "getStaticMovieScene",
+
+				"parameters": [
+					{
+						"$ref": "#/parameters/Authorization"
+					},
+					{
+						"$ref": "#/parameters/AcceptLanguage"
+					},
+					{
+						"$ref": "#/parameters/ContentType"
+					},
+					{
+						"name": "client_movie_id",
+						"in": "path",
+						"description": "Client movie ID being played",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "timestamp",
+						"in": "path",
+						"description": "Current movie timestamp in seconds",
+						"required": true,
+						"type": "number",
+						"format": "float"
+					},
+					{
+						"$ref": "#/parameters/RelationsFlag"
+					},
+					{
+						"$ref": "#/parameters/ImageSize"
+					}
+				],
+
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/Card"
+							}
+						},	
+						"examples": {
+							"application/json": [
+								{
+									"card_id": "39f8b960-2eea-11e6-97ac-0684985cbbe3",
+									"version": "09s6kqDVvt5Qj-307YB1n+Emi",
+									"type": "character",
+									"locale": "en_US",
+									"title": "Lucienne's friend",
+									"subtitle": null,
+									"image": {
+										"thumb": "https://card.touchvie.com/39f8b960-2eea-11e6-97ac-0684985cbbe/39f8b960-2eea-11e6-97ac-0684985cbbe_thumb.jpg",
+										"full": "https://card.touchvie.com/39f8b960-2eea-11e6-97ac-0684985cbbe/39f8b960-2eea-11e6-97ac-0684985cbbe_full.jpg",
+										"anchor_x": 50,
+										"anchor_y": 50,
+										"source": {
+											"name": "TMDB",
+											"url": "https://www.tmdb.com/actor/245354534",
+											"disclaimer": "TMDB All rights reserved",
+											"image": "https://cdn.touchvie.com/img/sources/ico_tmdb.png"
+										}
+									},
+									"relations": [
+										{
+											"type": "single",
+											"content_type": "trivia",
+											"data": [
+												{
+													"card_id": "39f8b960-2eea-11e6-97ac-0684985cbbe3",
+													"version": "09s6kqDVvt5Qj-307YB1n+Emi",
+													"type": "trivia",
+													"locale": "en_US",
+													"title": "Did you know..?",
+													"subtitle": null,
+													"image": null
+												}
+											]
+										},
+										{
+											"type": "duple",
+											"content_type": "played_by",
+											"data": [
+												{
+													"rel_type": "played_by",
+													"from": {
+														"card_id": "26faf509-7422-318e-b9b7-f787474b2a90",
+														"version": "09s6kqDVvt5Qj-307YB1n+Emi",
+														"type": "movie",
+														"locale": "en_US",
+														"title": "Vicky Cristina Barcelona",
+														"subtitle": null,
+														"image": {
+															"thumb": "https://dev-img.dive.tv/26faf509-7422-318e-b9b7-f787474b2a90/26faf509-7422-318e-b9b7-f787474b2a90_0_es_ES_thumb_m.jpg",
+															"full": "https://dev-img.dive.tv/26faf509-7422-318e-b9b7-f787474b2a90/26faf509-7422-318e-b9b7-f787474b2a90_0_es_ES_full_m.jpg",
+															"anchor_x": 50,
+															"anchor_y": 50,
+															"source": null
+														}
+													},
+													"to": {
+														"card_id": "39f8b960-2eea-11e6-97ac-0684985cbbe3",
+														"version": "09s6kqDVvt5Qj-307YB1n+Emi",
+														"type": "person",
+														"locale": "en_US",
+														"title": "Robert DeNiro",
+														"subtitle": null,
+														"image": {
+															"thumb": "https://card.touchvie.com/39f8b960-2eea-11e6-97ac-0684985cbbe/39f8b960-2eea-11e6-97ac-0684985cbbe_thumb.jpg",
+															"full": "https://card.touchvie.com/39f8b960-2eea-11e6-97ac-0684985cbbe/39f8b960-2eea-11e6-97ac-0684985cbbe_full.jpg",
+															"anchor_x": 50,
+															"anchor_y": 50,
+															"source": {
+																"name": "TMDB",
+																"url": "https://www.tmdb.com/actor/245354534",
+																"disclaimer": "TMDB All rights reserved",
+																"image": "https://cdn.touchvie.com/img/sources/ico_tmdb.png"
+															}
+														}
+													}
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					},
+					"404": {
+						"description": "Movie or scene Not Found"
+					},
+					"503": {
+						"description": "Service Unavailable"
+					}
+				}
+			}
+		},
+
+		"/channels/{channel_id_list}/ready": {
+
+			"get": {
+
+				"summary": "Channel sync availability",
+				"description": "Checks if a list of client channel identifiers are currently broadcasting synchronizable content",
+				"operationId": "getReadyChannels",
+
+				"parameters": [
+					{
+						"$ref": "#/parameters/Authorization"
+					},
+					{
+						"$ref": "#/parameters/AcceptLanguage"
+					},
+					{
+						"$ref": "#/parameters/ContentType"
+					},
+					{
+						"name": "channel_id_list",
+						"in": "path",
+						"description": "List of client channel IDs as a comma separated list",
+						"required": true,
+						"type": "array",
+						"collectionFormat": "csv",
+						"items": {
+							"type": "string"
+						}
+					}
+				],
+
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/ChannelStatus"
+							}
+						},
+						"examples": {
+							"application/json": [
+								{
+									"channel_id": "1",
+									"ready": true
+								},
+								{
+									"channel_id": "12",
+									"ready": false
+								}
+							]
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					},
+					"503": {
+						"description": "Service Unavailable"
+					}
+				}
+			}
+		},
+
+		"/channels/{channel_id}/static": {
+
+			"get": {
+
+				"summary": "One-shot channel scene",
+				"description": "Retrieves the list of cards related to the content currently being broadcasted in the provided channel",
+				"operationId": "getStaticChannelScene",
+
+				"parameters": [
+					{
+						"$ref": "#/parameters/Authorization"
+					},
+					{
+						"$ref": "#/parameters/AcceptLanguage"
+					},
+					{
+						"$ref": "#/parameters/ContentType"
+					},
+					{
+						"name": "channel_id",
+						"in": "path",
+						"description": "Client channel ID",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"$ref": "#/parameters/RelationsFlag"
+					},
+					{
+						"$ref": "#/parameters/ImageSize"
+					}
+				],
+
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/Card"
+							}
+						},	
+						"examples": {
+							"application/json": [
+								{
+									"card_id": "39f8b960-2eea-11e6-97ac-0684985cbbe3",
+									"version": "09s6kqDVvt5Qj-307YB1n+Emi",
+									"type": "character",
+									"locale": "en_US",
+									"title": "Lucienne's friend",
+									"subtitle": null,
+									"image": {
+										"thumb": "https://card.touchvie.com/39f8b960-2eea-11e6-97ac-0684985cbbe/39f8b960-2eea-11e6-97ac-0684985cbbe_thumb.jpg",
+										"full": "https://card.touchvie.com/39f8b960-2eea-11e6-97ac-0684985cbbe/39f8b960-2eea-11e6-97ac-0684985cbbe_full.jpg",
+										"anchor_x": 50,
+										"anchor_y": 50,
+										"source": {
+											"name": "TMDB",
+											"url": "https://www.tmdb.com/actor/245354534",
+											"disclaimer": "TMDB All rights reserved",
+											"image": "https://cdn.touchvie.com/img/sources/ico_tmdb.png"
+										}
+									},
+									"relations": [
+										{
+											"type": "single",
+											"content_type": "trivia",
+											"data": [
+												{
+													"card_id": "39f8b960-2eea-11e6-97ac-0684985cbbe3",
+													"version": "09s6kqDVvt5Qj-307YB1n+Emi",
+													"type": "trivia",
+													"locale": "en_US",
+													"title": "Did you know..?",
+													"subtitle": null,
+													"image": null
+												}
+											]
+										},
+										{
+											"type": "duple",
+											"content_type": "played_by",
+											"data": [
+												{
+													"rel_type": "played_by",
+													"from": {
+														"card_id": "26faf509-7422-318e-b9b7-f787474b2a90",
+														"version": "09s6kqDVvt5Qj-307YB1n+Emi",
+														"type": "movie",
+														"locale": "en_US",
+														"title": "Vicky Cristina Barcelona",
+														"subtitle": null,
+														"image": {
+															"thumb": "https://dev-img.dive.tv/26faf509-7422-318e-b9b7-f787474b2a90/26faf509-7422-318e-b9b7-f787474b2a90_0_es_ES_thumb_m.jpg",
+															"full": "https://dev-img.dive.tv/26faf509-7422-318e-b9b7-f787474b2a90/26faf509-7422-318e-b9b7-f787474b2a90_0_es_ES_full_m.jpg",
+															"anchor_x": 50,
+															"anchor_y": 50,
+															"source": null
+														}
+													},
+													"to": {
+														"card_id": "39f8b960-2eea-11e6-97ac-0684985cbbe3",
+														"version": "09s6kqDVvt5Qj-307YB1n+Emi",
+														"type": "person",
+														"locale": "en_US",
+														"title": "Robert DeNiro",
+														"subtitle": null,
+														"image": {
+															"thumb": "https://card.touchvie.com/39f8b960-2eea-11e6-97ac-0684985cbbe/39f8b960-2eea-11e6-97ac-0684985cbbe_thumb.jpg",
+															"full": "https://card.touchvie.com/39f8b960-2eea-11e6-97ac-0684985cbbe/39f8b960-2eea-11e6-97ac-0684985cbbe_full.jpg",
+															"anchor_x": 50,
+															"anchor_y": 50,
+															"source": {
+																"name": "TMDB",
+																"url": "https://www.tmdb.com/actor/245354534",
+																"disclaimer": "TMDB All rights reserved",
+																"image": "https://cdn.touchvie.com/img/sources/ico_tmdb.png"
+															}
+														}
+													}
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					},
+					"404": {
+						"description": "Channel Not Found or no content currently available"
+					},
+					"503": {
+						"description": "Service Unavailable"
+					}
+				}
+			}
+		},
+
+		"/cards/{card_id}/versions/{version}": {
+
+			"get": {
+
+				"summary": "Full card detail",
+				"description": "Retrieves a full card detail, and optionally its relations to other cards",
+				"operationId": "getCardVersion",
+
+				"parameters": [
+					{
+						"$ref": "#/parameters/Authorization"
+					},
+					{
+						"$ref": "#/parameters/AcceptLanguage"
+					},
+					{
+						"$ref": "#/parameters/ContentType"
+					},
+					{
+						"name": "card_id",
+						"in": "path",
+						"description": "Provided card ID (value of the 'card_id' field)",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "version",
+						"in": "path",
+						"description": "Provided card version (value of the 'version' field)",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"$ref": "#/parameters/RelationsFlag"
+					},
+					{
+						"$ref": "#/parameters/ImageSize"
+					}
+				],
+
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/Card"
+						},
+						"examples": {
+							"application/json": {
+								"card_id": "1f3c65b4-78fa-11e5-b7c2-0684985cbbe3",
+								"version": "09s6kqDVvt5Qj-307YB1n+Emi",
+								"locale": "es_ES",
+								"title": "Oyster Bay",
+								"subtitle": "39 Chestnut Hill Drive, Oyster Bay, Nueva York, Estados Unidos",
+								"type": "location",
+								"image": {
+									"thumb": "https://card.touchvie.com/1f3c65b4-78fa-11e5-b7c2-0684985cbbe3/1f3c65b4-78fa-11e5-b7c2-0684985cbbe3_0_thumb_m.jpg",
+									"full": "https://card.touchvie.com/1f3c65b4-78fa-11e5-b7c2-0684985cbbe3/1f3c65b4-78fa-11e5-b7c2-0684985cbbe3_0_full_m.jpg",
+									"anchor_x": 50,
+									"anchor_y": 50,
+									"source": {
+										"name": "activerain.com",
+										"url": "http://activerain.com/image_store/uploads/7/5/1/6/7/ar127500677076157.JPG",
+										"disclaimer": null,
+										"image": null
+									}
+								},
+								"info": [
+									{
+										"type": "text",
+										"content_type": "description",
+										"data": [
+											{
+												"text": "Oyster Bay es un pueblo ubicado en el condado de Nassau en el estado estadounidense de Nueva York. En el año 2000 tenía una población de 293.925 habitantes y una densidad poblacional de 1,087.3 personas por km². Oyster Bay es uno de los tres pueblos del condado, junto con North Hempstead y Hempstead.",
+												"source": {
+													"name": "Wikipedia",
+													"url": "https://es.wikipedia.org/wiki/Oyster_Bay_(Nueva_York)",
+													"disclaimer": null,
+													"image": "https://cdn.touchvie.com/img/sources/ico_wikipedia.png"
+												}
+											}
+										]
+									},
+									{
+										"type": "map",
+										"content_type": "location",
+										"data": [
+											{
+												"zoom": 13,
+												"latitude": 40.84906,
+												"longitude": -73.56316
+											}
+										]
+									}
+								]
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					},
+					"404": {
+						"description": "Card ID Not Found"
+					},
+					"503": {
+						"description": "Service Unavailable"
+					}
+				}
+			}
+		}
+	},
+
+	"definitions": {
+
+		"AccessToken": {
+			"properties": {
+				"access_token": {
+					"type": "string",
+					"description": "Auth token, must be included on every API request"
+				},
+				"token_type": {
+					"type": "string",
+					"description": "Token type",
+					"enum": [
+						"bearer"
+					]
+				},
+				"refresh_token": {
+					"type": "string",
+					"description": "Allows to issue new access tokens without resending client credentials"
+				},
+				"expires_in": {
+					"type": "integer",
+					"description": "Expiration time (in seconds)."
+				},
+				"scope": {
+					"type": "string",
+					"description": "Granted auth scope",
+					"enum": [
+						"device"
+					]
+				}
+			}
+		},
+
+		"AuthError": {
+			"properties": {
+				"error": {
+					"type": "string",
+					"description": "Short error identifier"
+				},
+				"error_description": {
+					"type": "string",
+					"description": "Extended error description"
+				}
+			}
+		},
+
+		"MovieStatus": {
+			"properties": {
+				"movie_id": {
+					"type": "string",
+					"description": "Provided client movie ID"
+				},
+				"ready": {
+					"type": "boolean",
+					"description": "True if movie can be synchronized via this API, False otherwise."
+				}
+			}
+		},
+
+		"ChannelStatus": {
+			"properties": {
+				"channel_id": {
+					"type": "string",
+					"description": "Provided channel ID"
+				},
+				"ready": {
+					"type": "boolean",
+					"description": "True if channel is broadcasting synchronizable content, False otherwise"
+				}
+			}
+		},
+
+		"Card": {
+			"description": "Basic Dive data unit, represents an item of a given category",
+			"type": "object",
+			"properties": {
+				"card_id": {
+					"type": "string",
+					"description": "Card unique identifier"
+				},
+				"version": {
+					"type": "string",
+					"description": "Card version for a given movie and scene"
+				},
+				"type": {
+					"type": "string",
+					"description": "Card type",
+					"enum":[
+						"movie", "serie", "person", "character", "vehicle", "fashion", "location",
+						"historic", "trivia", "quote", "ost", "home", "technology", "art", "song",
+						"look", "weapon", "leisure_sport", "health_beauty", "food_drink",
+						"fauna_flora", "business", "reference", "chapter"
+					]
+				},
+				"locale": {
+					"type": "string",
+					"description": "Card content locale"
+				},
+				"title": {
+					"type": "string",
+					"description": "Card title"
+				},
+				"subtitle": {
+					"type": "string",
+					"description": "Card subtitle (might be empty)"
+				},
+				"image": {
+					"$ref": "#/definitions/ImageData"
+				},
+				"info": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/CardContainer"
+					}
+				},
+				"relations": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/RelationModule"
+					}
+				}
+			},
+			"required": [
+				"card_id",
+				"type",
+				"locale",
+				"title"
+			]
+		},
+
+		"ImageData": {
+			"description": "Linked image URL and additional information",
+			"type": "object",
+			"properties":{
+				"thumb": {
+					"type": "string",
+					"description": "Image thumbnail URL"
+				},
+				"full": {
+					"type": "string",
+					"description": "Full size image URL"
+				},
+				"anchor_x": {
+					"type": "number",
+					"description": "Image anchor X axis (percent)",
+					"minimum": 0,
+					"maximum": 100
+				},
+				"anchor_y": {
+					"type": "number",
+					"description": "Image anchor Y axis (percent)",
+					"minimum": 0,
+					"maximum": 100
+				},
+				"source": {
+					"$ref": "#/definitions/SourceData"
+				}
+			},
+			"required": [
+				"thumb",
+				"full",
+				"anchor_x",
+				"anchor_y",
+				"source"
+			]
+		},
+
+		"SourceData": {
+			"description": "Information regarding the source of any API item",
+			"type": "object",
+			"properties":{
+				"name": {
+					"type": "string",
+					"description": "Name of the source"
+				},
+				"url": {
+					"type": "string",
+					"description": "URL of the source"
+				},
+				"disclaimer": {
+					"type": "string",
+					"description": "Disclaimer text of the source"
+				},
+				"image": {
+					"type": "string",
+					"description": "URL of the source icon"
+				}
+			},
+			"required": [
+				"name",
+				"url"
+			]
+		},
+
+		"CardContainer": {
+			"description": "Card static data container. It's content depends on the 'type' parameter value and is represented by the schema of the same name",
+			"type": "object",
+			"discriminator": "type",
+			"properties":{
+				"type": {
+					"type": "string",
+					"description": "Card container format type, determines the format of the 'data' field",
+					"enum":[
+						"text", "listing", "rating", "map", "link",
+						"awards", "catalog", "seasons", "image"
+					]
+				}
+			},
+			"required": [
+				"type"
+			]
+		},
+
+		"text": {
+			"description": "CardContainer composed by a block of text with an optional source attribution",
+			"type": "object",
+			"allOf": [
+				{
+					"$ref": "#/definitions/CardContainer"
+				},
+				{
+					"type": "object",
+					"properties":{
+						"content_type": {
+							"type": "string",
+							"description": "Text container content type",
+							"enum": [
+								"overview", "curiosity", "description", "biography", "reference", "quote"
+							]
+						},
+						"data": {
+							"type": "array",
+							"minLength": 1,
+							"maxLength": 1,
+							"items": {
+								"type": "object",
+								"properties":{
+									"text": {
+										"type": "string",
+										"description": "Informational text"
+									},
+									"source": {
+										"$ref": "#/definitions/SourceData"
+									}
+								},
+								"required":[
+									"text"
+								]
+							}
+						}
+					},
+					"required":[
+						"data", "content_type"
+					]
+				}
+			]
+		},
+
+		"listing": {
+			"description": "CardContainer composed by a list of pairs of label - value items",
+			"type": "object",
+			"allOf": [
+				{
+					"$ref": "#/definitions/CardContainer"
+				},
+				{
+					"type": "object",
+					"properties":{
+						"content_type": {
+							"type": "string",
+							"description": "Listing container content type",
+							"enum": [
+								"basic_data", "specs"
+							]
+						},
+						"data": {
+							"type": "array",
+							"minLength": 1,
+							"items": {
+								"type": "object",
+								"properties":{
+									"text": {
+										"type": "string",
+										"description": "Item label"
+									},
+									"value": {
+										"type": "string",
+										"description": "Item value"
+									}
+								},
+								"required":[
+									"text", "value"
+								]
+							}
+						}
+					},
+					"required":[
+						"data", "content_type"
+					]
+				}
+			]
+		},
+
+		"rating": {
+			"description": "CardContainer composed by a list of external ratings with source attribution",
+			"type": "object",
+			"allOf": [
+				{
+					"$ref": "#/definitions/CardContainer"
+				},
+				{
+					"type": "object",
+					"properties":{
+						"content_type": {
+							"type": "string",
+							"description": "Rating container content type",
+							"enum": [
+								"rating"
+							]
+						},
+						"data": {
+							"type": "array",
+							"minLength": 1,
+							"items": {
+								"type": "object",
+								"properties":{
+									"value": {
+										"type": "string",
+										"description": "Rating value"
+									},
+									"source": {
+										"$ref": "#/definitions/SourceData"
+									}
+								},
+								"required":[
+									"value"
+								]
+							}
+						}
+					},
+					"required":[
+						"data", "content_type"
+					]
+				}
+			]
+		},
+
+		"map": {
+			"description": "CardContainer composed by a map of a given location",
+			"type": "object",
+			"allOf": [
+				{
+					"$ref": "#/definitions/CardContainer"
+				},
+				{
+					"type": "object",
+					"properties":{
+						"content_type": {
+							"type": "string",
+							"description": "Map container content type",
+							"enum": [
+								"location"
+							]
+						},
+						"data": {
+							"type": "array",
+							"minLength": 1,
+							"maxLength": 1,
+							"items": {
+								"type": "object",
+								"properties":{
+									"latitude": {
+										"type": "number",
+										"format": "float",
+										"description": "Value of the location latitude, in decimal format degrees"
+									},
+									"longitude": {
+										"type": "number",
+										"format": "float",
+										"description": "Value of the location longitude, in decimal format degrees"
+									},
+									"zoom": {
+										"type": "integer",
+										"format": "int32",
+										"description": "Zoom value, defines the height coordinate over the given location"
+									}
+								},
+								"required":[
+									"latitude", "longitude", "zoom"
+								]
+							}
+						}
+					},
+					"required":[
+						"data", "content_type"
+					]
+				}
+			]
+		},
+
+		"link": {
+			"description": "CardContainer composed by a list of links to external media resources with source attribution",
+			"type": "object",
+			"allOf": [
+				{
+					"$ref": "#/definitions/CardContainer"
+				},
+				{
+					"type": "object",
+					"properties":{
+						"content_type": {
+							"type": "string",
+							"description": "Link container content type",
+							"enum": [
+								"trailer", "video", "music"
+							]
+						},
+						"data": {
+							"type": "array",
+							"minLength": 1,
+							"items": {
+								"type": "object",
+								"properties":{
+									"url": {
+										"type": "string",
+										"description": "URL of the external resource"
+									},
+									"source": {
+										"$ref": "#/definitions/SourceData"
+									}
+								},
+								"required":[
+									"url", "source"
+								]
+							}
+						}
+					},
+					"required":[
+						"data", "content_type"
+					]
+				}
+			]
+		},
+
+		"image": {
+			"description": "CardContainer composed by a list of images with source attribution",
+			"type": "object",
+			"allOf": [
+				{
+					"$ref": "#/definitions/CardContainer"
+				},
+				{
+					"type": "object",
+					"properties":{
+						"content_type": {
+							"type": "string",
+							"description": "Image container content type",
+							"enum": [
+								"gallery"
+							]
+						},
+						"data": {
+							"type": "array",
+							"minLength": 1,
+							"items": {
+								"$ref": "#/definitions/ImageData"
+							}
+						}
+					},
+					"required":[
+						"data", "content_type"
+					]
+				}
+			]
+		},
+
+		"awards": {
+			"description": "CardContainer composed by a list of awards with nominees and winners",
+			"type": "object",
+			"allOf": [
+				{
+					"$ref": "#/definitions/CardContainer"
+				},
+				{
+					"type": "object",
+					"properties":{
+						"content_type": {
+							"type": "string",
+							"description": "Awards container content type",
+							"enum": [
+								"awards"
+							]
+						},
+						"data": {
+							"type": "array",
+							"minLength": 1,
+							"items": {
+								"type": "object",
+								"properties":{
+									"title": {
+										"type": "string",
+										"description": "Award name"
+									},
+									"nominee": {
+										"type": "array",
+										"minLength": 1,
+										"items": {
+											"$ref": "#/definitions/AwardData"
+										}
+									},
+									"winner": {
+										"type": "array",
+										"minLength": 1,
+										"items": {
+											"$ref": "#/definitions/AwardData"
+										}
+									}
+								},
+								"required":[
+									"title"
+								]
+							}
+						}
+					},
+					"required":[
+						"data", "content_type"
+					]
+				}
+			]
+		},
+
+		"AwardData": {
+			"type": "object",
+			"description": "Award nominee or winner info",
+			"properties":{
+				"title": {
+					"type": "string",
+					"description": "Name of the prize"
+				},
+				"value": {
+					"type": "string",
+					"description": "Name of the nominee / winner"
+				}
+			},
+			"required":[
+				"title", "value"
+			]
+		},
+
+		"catalog": {
+			"description": "CardContainer composed by additional information of a catalog item (movie, serie or chapter)",
+			"type": "object",
+			"allOf": [
+				{
+					"$ref": "#/definitions/CardContainer"
+				},
+				{
+					"type": "object",
+					"properties":{
+						"content_type": {
+							"type": "string",
+							"description": "Catalog container content type",
+							"enum": [
+								"movie", "chapter", "serie"
+							]
+						},
+						"data": {
+							"type": "array",
+							"minLength": 1,
+							"maxLength": 1,
+							"items": {
+								"type": "object",
+								"properties": {
+									"background_image": {
+										"type": "string",
+										"description": "URL of an additional background image for this catalog element"
+									},
+									"director": {
+										"type": "string",
+										"description": "Name of the director"
+									},
+									"genres": {
+										"type": "array",
+										"description": "List of genres of this catalog entry",
+										"items": {
+											"type": "string"
+										}
+									},
+									"original_title": {
+										"type": "string",
+										"description": "Original language title"
+									},
+									"runtime": {
+										"type": "integer",
+										"description": "Length of the movie or chapter, or average length of serie chapters, in minutes"
+									},
+									"year": {
+										"type": "integer",
+										"description": "Year of production"
+									},
+									"chapter_index": {
+										"type": "integer",
+										"description": "Index of the chapter inside its season (only for content_type=chapter)"
+									},
+									"season_index": {
+										"type": "integer",
+										"description": "Index of the season where the chapter belongs (only for content_type=chapter)"
+									},
+									"sync": {
+										"type": "object",
+										"description": "Dive interactive capabilities of this catalog item",
+										"properties":{
+											"is_synchronizable": {
+												"type": "boolean",
+												"description": "Indicates if this catalog item can be synchronized"
+											}
+										},
+										"required": [
+											"is_synchronizable"
+										]
+									}
+								},
+								"required": [
+									"director", "genres", "original_title", "runtime", "year"
+								]
+							}
+						}
+					},
+					"required":[
+						"data", "content_type"
+					]
+				}
+			]
+		},
+
+		"seasons": {
+			"description": "Serie seasons listing",
+			"type": "object",
+			"allOf": [
+				{
+					"$ref": "#/definitions/CardContainer"
+				},
+				{
+					"type": "object",
+					"properties":{
+						"content_type": {
+							"type": "string",
+							"description": "Seasons container content type",
+							"enum": [
+								"seasons"
+							]
+						},
+						"data": {
+							"type": "array",
+							"minLength": 1,
+							"items": {
+								"type": "object",
+								"properties":{
+									"season_index": {
+										"type": "integer",
+										"description": "Index of the season"
+									},
+									"creators": {
+										"type": "string",
+										"description": "Comma separated list of season creators"
+									},
+									"image": {
+										"$ref": "#/definitions/ImageData"
+									},
+									"year": {
+										"type": "integer",
+										"description": "Year of production of this season"
+									},
+									"chapters": {
+										"type": "array",
+										"description": "List of season chapters",
+										"minLength": 1,
+										"items": {
+											"type": "object",
+											"properties":{
+												"chapter_index": {
+													"type": "integer",
+													"description": "Index of the chapter inside this season"
+												},
+												"card_id": {
+													"type": "string",
+													"description": "ID of the chapter card"
+												}
+											},
+											"required": [
+												"chapter_index", "card_id"
+											]
+										}
+									}
+								},
+								"required":[
+									"season_index", "creators", "image", "year", "chapters"
+								]
+							}
+						}
+					},
+					"required":[
+						"data", "content_type"
+					]
+				}
+			]
+		},
+
+		"RelationModule": {
+			"description": "Relation modules provide lists of cards related to the current one. It's contents depend on the module 'type' attribute",
+			"type": "object",
+			"discriminator": "type",
+			"properties":{
+				"type": {
+					"type": "string",
+					"description": "Relation module type, defines the contained data structure",
+					"enum":[
+						"single", "duple"
+					]
+				}
+			},
+			"required": [
+				"type"
+			]
+		},
+
+		"single": {
+			"description": "List of related single cards. The relation type is defined by the module content type",
+			"type": "object",
+			"allOf": [
+				{
+					"$ref": "#/definitions/RelationModule"
+				},
+				{
+					"type": "object",
+					"properties":{
+						"content_type": {
+							"type": "string",
+							"description": "Single module content type, defines what kind of relations are contained in the module",
+							"enum": [
+								"trivias",
+								"directors",
+								"appears_in",
+								"full_looks",
+								"look_fashion",
+								"fashion_set",
+								"full_home",
+								"home_deco",
+								"tracklist",
+								"sounds_in",
+								"is_part_of",
+								"is_chapter_of",
+								"wears"
+							]
+						},
+						"data": {
+							"type": "array",
+							"minLength": 1,
+							"items": {
+								"$ref": "#/definitions/Card"
+							}
+						}
+					},
+					"required":[
+						"data", "content_type"
+					]
+				}
+			]
+		},
+
+		"duple": {
+			"description": "List of related pairs of cards, each pair having a relationship type between both cards",
+			"type": "object",
+			"allOf": [
+				{
+					"$ref": "#/definitions/RelationModule"
+				},
+				{
+					"type": "object",
+					"properties":{
+						"content_type": {
+							"type": "string",
+							"description": "Duple module content type, defines what kind of relations are contained in the module",
+							"enum": [
+								"casting",
+								"filmography",
+								"played_by",
+								"worn_by",
+								"featured_in"
+							]
+						},
+						"data": {
+							"type": "array",
+							"minLength": 1,
+							"items": {
+								"type": "object",
+								"properties":{
+									"rel_type": {
+										"type": "string",
+										"description": "Indicates the relationship between the pair of cards (from > rel_type > to)"
+									},
+									"from": {
+										"$ref": "#/definitions/Card"
+									},
+									"to": {
+										"$ref": "#/definitions/Card"	
+									}
+								},
+								"required":[
+									"rel_type", "from"
+								]
+							}
+						}
+					},
+					"required":[
+						"data", "content_type"
+					]
+				}
+			]
+		}
+	},
+
+	"parameters": {
+		"Authorization": {
+			"name": "Authorization",
+			"in": "header",
+			"description": "Authorization token ('Bearer <token>')",
+			"required": true,
+			"type": "string"
+		},
+		"BasicAuthorization": {
+			"name": "Authorization",
+			"in": "header",
+			"description": "Basic authorization token ('Basic <client_key>')",
+			"required": true,
+			"type": "string"
+		},
+		"AcceptLanguage": {
+			"name": "Accept-Language",
+			"in": "header",
+			"description": "Client locale, as <language>-<country>",
+			"required": false,
+			"type": "string"
+		},
+		"ContentType": {
+			"name": "Content-Type",
+			"in": "header",
+			"description": "application/json",
+			"required": false,
+			"type": "string"
+		},
+		"RelationsFlag": {
+			"name": "relations",
+			"in": "query",
+			"description": "Indicates if the received scene cards should contain the scene hierarchy (true) or be a flat list of the main scene items (false)",
+			"required": false,
+			"type": "boolean",
+			"default": false
+		},
+		"ImageSize": {
+			"name": "image_size",
+			"in": "query",
+			"description": "Size of the images returned in the response",
+			"required": false,
+			"type": "string",
+			"default": "m",
+			"enum": [
+				"s",
+				"m",
+				"l"
+			]
+		}
+	}
+}

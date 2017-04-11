@@ -76,22 +76,22 @@ public class DefaultApi {
    * @param imageSize Size of the images returned in the response
    * @return Card
    */
-  public Card  cardsCardIdVersionsVersionGet (String authorization, String cardId, String version, String acceptLanguage, String contentType, Boolean relations, String imageSize) throws ApiException {
+  public Card  getCardVersion (String authorization, String cardId, String version, String acceptLanguage, String contentType, Boolean relations, String imageSize) throws ApiException {
     Object localVarPostBody = null;
     
     // verify the required parameter 'authorization' is set
     if (authorization == null) {
-       throw new ApiException(400, "Missing the required parameter 'authorization' when calling cardsCardIdVersionsVersionGet");
+       throw new ApiException(400, "Missing the required parameter 'authorization' when calling getCardVersion");
     }
     
     // verify the required parameter 'cardId' is set
     if (cardId == null) {
-       throw new ApiException(400, "Missing the required parameter 'cardId' when calling cardsCardIdVersionsVersionGet");
+       throw new ApiException(400, "Missing the required parameter 'cardId' when calling getCardVersion");
     }
     
     // verify the required parameter 'version' is set
     if (version == null) {
-       throw new ApiException(400, "Missing the required parameter 'version' when calling cardsCardIdVersionsVersionGet");
+       throw new ApiException(400, "Missing the required parameter 'version' when calling getCardVersion");
     }
     
 
@@ -148,17 +148,17 @@ public class DefaultApi {
    * @param contentType application/json
    * @return List<ChannelStatus>
    */
-  public List<ChannelStatus>  channelsChannelIdListReadyGet (String authorization, List<String> channelIdList, String acceptLanguage, String contentType) throws ApiException {
+  public List<ChannelStatus>  getReadyChannels (String authorization, List<String> channelIdList, String acceptLanguage, String contentType) throws ApiException {
     Object localVarPostBody = null;
     
     // verify the required parameter 'authorization' is set
     if (authorization == null) {
-       throw new ApiException(400, "Missing the required parameter 'authorization' when calling channelsChannelIdListReadyGet");
+       throw new ApiException(400, "Missing the required parameter 'authorization' when calling getReadyChannels");
     }
     
     // verify the required parameter 'channelIdList' is set
     if (channelIdList == null) {
-       throw new ApiException(400, "Missing the required parameter 'channelIdList' when calling channelsChannelIdListReadyGet");
+       throw new ApiException(400, "Missing the required parameter 'channelIdList' when calling getReadyChannels");
     }
     
 
@@ -205,6 +205,71 @@ public class DefaultApi {
     }
   }
   /**
+   * Movie sync availability
+   * Checks whether a list of client movie identifiers (Video On Demand) are available to be synchronized using the Dive API
+   * @param authorization Authorization token (&#39;Bearer &lt;token&gt;&#39;)
+   * @param clientMovieIdList List of client movie IDs, provided as a comma separated list
+   * @param acceptLanguage Client locale, as &lt;language&gt;-&lt;country&gt;
+   * @param contentType application/json
+   * @return List<MovieStatus>
+   */
+  public List<MovieStatus>  getReadyMovies (String authorization, List<String> clientMovieIdList, String acceptLanguage, String contentType) throws ApiException {
+    Object localVarPostBody = null;
+    
+    // verify the required parameter 'authorization' is set
+    if (authorization == null) {
+       throw new ApiException(400, "Missing the required parameter 'authorization' when calling getReadyMovies");
+    }
+    
+    // verify the required parameter 'clientMovieIdList' is set
+    if (clientMovieIdList == null) {
+       throw new ApiException(400, "Missing the required parameter 'clientMovieIdList' when calling getReadyMovies");
+    }
+    
+
+    // create path and map variables
+    String localVarPath = "/movies/{client_movie_id_list}/ready".replaceAll("\\{format\\}","json").replaceAll("\\{" + "client_movie_id_list" + "\\}", apiInvoker.escapeString(clientMovieIdList.toString()));
+
+    // query params
+    List<Pair> localVarQueryParams = new ArrayList<Pair>();
+    // header params
+    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+    // form params
+    Map<String, String> localVarFormParams = new HashMap<String, String>();
+
+
+    localVarHeaderParams.put("Authorization", ApiInvoker.parameterToString(authorization));
+    localVarHeaderParams.put("Accept-Language", ApiInvoker.parameterToString(acceptLanguage));
+    localVarHeaderParams.put("Content-Type", ApiInvoker.parameterToString(contentType));
+
+    String[] localVarContentTypes = {
+      "application/json"
+    };
+    String localVarContentType = localVarContentTypes.length > 0 ? localVarContentTypes[0] : "application/json";
+
+    if (localVarContentType.startsWith("multipart/form-data")) {
+      // file uploading
+      MultipartEntityBuilder localVarBuilder = MultipartEntityBuilder.create();
+      
+
+      localVarPostBody = localVarBuilder.build();
+    } else {
+      // normal form params
+          }
+
+    try {
+      String localVarResponse = apiInvoker.invokeAPI(basePath, localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarContentType);
+      if(localVarResponse != null){
+        return (List<MovieStatus>) ApiInvoker.deserialize(localVarResponse, "array", MovieStatus.class);
+      }
+      else {
+        return null;
+      }
+    } catch (ApiException ex) {
+      throw ex;
+    }
+  }
+  /**
    * One-shot channel scene
    * Retrieves the list of cards related to the content currently being broadcasted in the provided channel
    * @param authorization Authorization token (&#39;Bearer &lt;token&gt;&#39;)
@@ -215,17 +280,17 @@ public class DefaultApi {
    * @param imageSize Size of the images returned in the response
    * @return List<Card>
    */
-  public List<Card>  channelsChannelIdStaticGet (String authorization, String channelId, String acceptLanguage, String contentType, Boolean relations, String imageSize) throws ApiException {
+  public List<Card>  getStaticChannelScene (String authorization, String channelId, String acceptLanguage, String contentType, Boolean relations, String imageSize) throws ApiException {
     Object localVarPostBody = null;
     
     // verify the required parameter 'authorization' is set
     if (authorization == null) {
-       throw new ApiException(400, "Missing the required parameter 'authorization' when calling channelsChannelIdStaticGet");
+       throw new ApiException(400, "Missing the required parameter 'authorization' when calling getStaticChannelScene");
     }
     
     // verify the required parameter 'channelId' is set
     if (channelId == null) {
-       throw new ApiException(400, "Missing the required parameter 'channelId' when calling channelsChannelIdStaticGet");
+       throw new ApiException(400, "Missing the required parameter 'channelId' when calling getStaticChannelScene");
     }
     
 
@@ -274,71 +339,6 @@ public class DefaultApi {
     }
   }
   /**
-   * Movie sync availability
-   * Checks whether a list of client movie identifiers (Video On Demand) are available to be synchronized using the Dive API
-   * @param authorization Authorization token (&#39;Bearer &lt;token&gt;&#39;)
-   * @param clientMovieIdList List of client movie IDs, provided as a comma separated list
-   * @param acceptLanguage Client locale, as &lt;language&gt;-&lt;country&gt;
-   * @param contentType application/json
-   * @return List<MovieStatus>
-   */
-  public List<MovieStatus>  moviesClientMovieIdListReadyGet (String authorization, List<String> clientMovieIdList, String acceptLanguage, String contentType) throws ApiException {
-    Object localVarPostBody = null;
-    
-    // verify the required parameter 'authorization' is set
-    if (authorization == null) {
-       throw new ApiException(400, "Missing the required parameter 'authorization' when calling moviesClientMovieIdListReadyGet");
-    }
-    
-    // verify the required parameter 'clientMovieIdList' is set
-    if (clientMovieIdList == null) {
-       throw new ApiException(400, "Missing the required parameter 'clientMovieIdList' when calling moviesClientMovieIdListReadyGet");
-    }
-    
-
-    // create path and map variables
-    String localVarPath = "/movies/{client_movie_id_list}/ready".replaceAll("\\{format\\}","json").replaceAll("\\{" + "client_movie_id_list" + "\\}", apiInvoker.escapeString(clientMovieIdList.toString()));
-
-    // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    // header params
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    // form params
-    Map<String, String> localVarFormParams = new HashMap<String, String>();
-
-
-    localVarHeaderParams.put("Authorization", ApiInvoker.parameterToString(authorization));
-    localVarHeaderParams.put("Accept-Language", ApiInvoker.parameterToString(acceptLanguage));
-    localVarHeaderParams.put("Content-Type", ApiInvoker.parameterToString(contentType));
-
-    String[] localVarContentTypes = {
-      "application/json"
-    };
-    String localVarContentType = localVarContentTypes.length > 0 ? localVarContentTypes[0] : "application/json";
-
-    if (localVarContentType.startsWith("multipart/form-data")) {
-      // file uploading
-      MultipartEntityBuilder localVarBuilder = MultipartEntityBuilder.create();
-      
-
-      localVarPostBody = localVarBuilder.build();
-    } else {
-      // normal form params
-          }
-
-    try {
-      String localVarResponse = apiInvoker.invokeAPI(basePath, localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarContentType);
-      if(localVarResponse != null){
-        return (List<MovieStatus>) ApiInvoker.deserialize(localVarResponse, "array", MovieStatus.class);
-      }
-      else {
-        return null;
-      }
-    } catch (ApiException ex) {
-      throw ex;
-    }
-  }
-  /**
    * One-shot movie scene
    * Retrieves the current list of cards related to the given movie scene
    * @param authorization Authorization token (&#39;Bearer &lt;token&gt;&#39;)
@@ -350,22 +350,22 @@ public class DefaultApi {
    * @param imageSize Size of the images returned in the response
    * @return List<Card>
    */
-  public List<Card>  moviesClientMovieIdStaticTimestampGet (String authorization, String clientMovieId, Float timestamp, String acceptLanguage, String contentType, Boolean relations, String imageSize) throws ApiException {
+  public List<Card>  getStaticMovieScene (String authorization, String clientMovieId, Float timestamp, String acceptLanguage, String contentType, Boolean relations, String imageSize) throws ApiException {
     Object localVarPostBody = null;
     
     // verify the required parameter 'authorization' is set
     if (authorization == null) {
-       throw new ApiException(400, "Missing the required parameter 'authorization' when calling moviesClientMovieIdStaticTimestampGet");
+       throw new ApiException(400, "Missing the required parameter 'authorization' when calling getStaticMovieScene");
     }
     
     // verify the required parameter 'clientMovieId' is set
     if (clientMovieId == null) {
-       throw new ApiException(400, "Missing the required parameter 'clientMovieId' when calling moviesClientMovieIdStaticTimestampGet");
+       throw new ApiException(400, "Missing the required parameter 'clientMovieId' when calling getStaticMovieScene");
     }
     
     // verify the required parameter 'timestamp' is set
     if (timestamp == null) {
-       throw new ApiException(400, "Missing the required parameter 'timestamp' when calling moviesClientMovieIdStaticTimestampGet");
+       throw new ApiException(400, "Missing the required parameter 'timestamp' when calling getStaticMovieScene");
     }
     
 
@@ -424,17 +424,17 @@ public class DefaultApi {
    * @param refreshToken Refresh token, used to issue a new token without resending client credentials. Required only for \&quot;refresh_token\&quot; grant type
    * @return AccessToken
    */
-  public AccessToken  tokenPost (String authorization, String grantType, String acceptLanguage, String contentType, String deviceId, String refreshToken) throws ApiException {
+  public AccessToken  postToken (String authorization, String grantType, String acceptLanguage, String contentType, String deviceId, String refreshToken) throws ApiException {
     Object localVarPostBody = null;
     
     // verify the required parameter 'authorization' is set
     if (authorization == null) {
-       throw new ApiException(400, "Missing the required parameter 'authorization' when calling tokenPost");
+       throw new ApiException(400, "Missing the required parameter 'authorization' when calling postToken");
     }
     
     // verify the required parameter 'grantType' is set
     if (grantType == null) {
-       throw new ApiException(400, "Missing the required parameter 'grantType' when calling tokenPost");
+       throw new ApiException(400, "Missing the required parameter 'grantType' when calling postToken");
     }
     
 

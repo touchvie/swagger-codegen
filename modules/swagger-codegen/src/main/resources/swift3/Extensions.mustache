@@ -84,6 +84,21 @@ extension UUID: JSONEncodable {
     }
 }
 
+extension String {
+    func toBase64() -> String {
+        return Data(self.utf8).base64EncodedString()
+    }
+}
+
+extension RawRepresentable where RawValue == String{
+    var getSwaggerRawValue: String{
+        var rawPart = rawValue.components(separatedBy: ",");
+        var realRawValue = rawPart[0].components(separatedBy: "=");
+        print(realRawValue[1]);
+        return realRawValue[1];
+    }
+}
+
 {{#usePromiseKit}}extension RequestBuilder {
     public func execute() -> Promise<Response<T>>  {
         let deferred = Promise<Response<T>>.pending()

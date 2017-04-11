@@ -75,6 +75,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import com.google.gson.JsonParseException;
+import com.android.volley.toolbox.HttpClientStack;
 
 public class ApiInvoker {
   private static ApiInvoker INSTANCE = new ApiInvoker();
@@ -373,7 +374,7 @@ public class ApiInvoker {
         response = client.execute(delete);
       }
       else if ("PATCH".equals(method)) {
-        HttpPatch patch = new HttpPatch(url);
+       HttpClientStack.HttpPatch patch = new HttpClientStack.HttpPatch(url);
         if (formParamStr != null) {
           patch.setHeader("Content-Type", contentType);
           patch.setEntity(new StringEntity(formParamStr, "UTF-8"));

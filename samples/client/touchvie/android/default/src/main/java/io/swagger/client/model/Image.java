@@ -14,11 +14,11 @@ import com.google.gson.annotations.SerializedName;
 @ApiModel(description = "CardContainer composed by a list of images with source attribution")
 public class Image extends CardContainer {
   
-  public enum TypeEnum {
+  public enum TypeOfContainerEnum {
      text,  listing,  rating,  map,  link,  awards,  catalog,  seasons,  image, 
   };
-  @SerializedName("type")
-  private TypeEnum type = null;
+  @SerializedName("typeOfContainer")
+  private TypeOfContainerEnum typeOfContainer = null;
   public enum ContentTypeEnum {
      gallery, 
   };
@@ -31,11 +31,11 @@ public class Image extends CardContainer {
    * Card container format type, determines the format of the 'data' field
    **/
   @ApiModelProperty(required = true, value = "Card container format type, determines the format of the 'data' field")
-  public TypeEnum getType() {
-    return type;
+  public TypeOfContainerEnum getTypeOfContainer() {
+    return typeOfContainer;
   }
-  public void setType(TypeEnum type) {
-    this.type = type;
+  public void setTypeOfContainer(TypeOfContainerEnum typeOfContainer) {
+    this.typeOfContainer = typeOfContainer;
   }
 
   /**
@@ -69,7 +69,7 @@ public class Image extends CardContainer {
       return false;
     }
     Image image = (Image) o;
-    return (this.type == null ? image.type == null : this.type.equals(image.type)) &&
+    return (this.typeOfContainer == null ? image.typeOfContainer == null : this.typeOfContainer.equals(image.typeOfContainer)) &&
         (this.contentType == null ? image.contentType == null : this.contentType.equals(image.contentType)) &&
         (this.data == null ? image.data == null : this.data.equals(image.data));
   }
@@ -77,7 +77,7 @@ public class Image extends CardContainer {
   @Override
   public int hashCode() {
     int result = 17;
-    result = 31 * result + (type == null ? 0: type.hashCode());
+    result = 31 * result + (typeOfContainer == null ? 0: typeOfContainer.hashCode());
     result = 31 * result + (contentType == null ? 0: contentType.hashCode());
     result = 31 * result + (data == null ? 0: data.hashCode());
     return result;
@@ -88,7 +88,7 @@ public class Image extends CardContainer {
     StringBuilder sb = new StringBuilder();
     sb.append("class Image {\n");
     sb.append("  " + super.toString()).append("\n");
-    sb.append("  type: ").append(type).append("\n");
+    sb.append("  typeOfContainer: ").append(typeOfContainer).append("\n");
     sb.append("  contentType: ").append(contentType).append("\n");
     sb.append("  data: ").append(data).append("\n");
     sb.append("}\n");

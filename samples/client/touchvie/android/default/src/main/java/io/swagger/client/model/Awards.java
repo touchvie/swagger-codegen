@@ -14,11 +14,11 @@ import com.google.gson.annotations.SerializedName;
 @ApiModel(description = "CardContainer composed by a list of awards with nominees and winners")
 public class Awards extends CardContainer {
   
-  public enum TypeEnum {
+  public enum TypeOfContainerEnum {
      text,  listing,  rating,  map,  link,  awards,  catalog,  seasons,  image, 
   };
-  @SerializedName("type")
-  private TypeEnum type = null;
+  @SerializedName("typeOfContainer")
+  private TypeOfContainerEnum typeOfContainer = null;
   public enum ContentTypeEnum {
      awards, 
   };
@@ -31,11 +31,11 @@ public class Awards extends CardContainer {
    * Card container format type, determines the format of the 'data' field
    **/
   @ApiModelProperty(required = true, value = "Card container format type, determines the format of the 'data' field")
-  public TypeEnum getType() {
-    return type;
+  public TypeOfContainerEnum getTypeOfContainer() {
+    return typeOfContainer;
   }
-  public void setType(TypeEnum type) {
-    this.type = type;
+  public void setTypeOfContainer(TypeOfContainerEnum typeOfContainer) {
+    this.typeOfContainer = typeOfContainer;
   }
 
   /**
@@ -69,7 +69,7 @@ public class Awards extends CardContainer {
       return false;
     }
     Awards awards = (Awards) o;
-    return (this.type == null ? awards.type == null : this.type.equals(awards.type)) &&
+    return (this.typeOfContainer == null ? awards.typeOfContainer == null : this.typeOfContainer.equals(awards.typeOfContainer)) &&
         (this.contentType == null ? awards.contentType == null : this.contentType.equals(awards.contentType)) &&
         (this.data == null ? awards.data == null : this.data.equals(awards.data));
   }
@@ -77,7 +77,7 @@ public class Awards extends CardContainer {
   @Override
   public int hashCode() {
     int result = 17;
-    result = 31 * result + (type == null ? 0: type.hashCode());
+    result = 31 * result + (typeOfContainer == null ? 0: typeOfContainer.hashCode());
     result = 31 * result + (contentType == null ? 0: contentType.hashCode());
     result = 31 * result + (data == null ? 0: data.hashCode());
     return result;
@@ -88,7 +88,7 @@ public class Awards extends CardContainer {
     StringBuilder sb = new StringBuilder();
     sb.append("class Awards {\n");
     sb.append("  " + super.toString()).append("\n");
-    sb.append("  type: ").append(type).append("\n");
+    sb.append("  typeOfContainer: ").append(typeOfContainer).append("\n");
     sb.append("  contentType: ").append(contentType).append("\n");
     sb.append("  data: ").append(data).append("\n");
     sb.append("}\n");

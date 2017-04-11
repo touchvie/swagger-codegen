@@ -4,17 +4,17 @@ All URIs are relative to *https://pre-api.touchvie.com/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**cardsCardIdVersionsVersionGet**](DefaultApi.md#cardsCardIdVersionsVersionGet) | **GET** /cards/{card_id}/versions/{version} | Full card detail
-[**channelsChannelIdListReadyGet**](DefaultApi.md#channelsChannelIdListReadyGet) | **GET** /channels/{channel_id_list}/ready | Channel sync availability
-[**channelsChannelIdStaticGet**](DefaultApi.md#channelsChannelIdStaticGet) | **GET** /channels/{channel_id}/static | One-shot channel scene
-[**moviesClientMovieIdListReadyGet**](DefaultApi.md#moviesClientMovieIdListReadyGet) | **GET** /movies/{client_movie_id_list}/ready | Movie sync availability
-[**moviesClientMovieIdStaticTimestampGet**](DefaultApi.md#moviesClientMovieIdStaticTimestampGet) | **GET** /movies/{client_movie_id}/static/{timestamp} | One-shot movie scene
-[**tokenPost**](DefaultApi.md#tokenPost) | **POST** /token | Token endpoint
+[**getCardVersion**](DefaultApi.md#getCardVersion) | **GET** /cards/{card_id}/versions/{version} | Full card detail
+[**getReadyChannels**](DefaultApi.md#getReadyChannels) | **GET** /channels/{channel_id_list}/ready | Channel sync availability
+[**getReadyMovies**](DefaultApi.md#getReadyMovies) | **GET** /movies/{client_movie_id_list}/ready | Movie sync availability
+[**getStaticChannelScene**](DefaultApi.md#getStaticChannelScene) | **GET** /channels/{channel_id}/static | One-shot channel scene
+[**getStaticMovieScene**](DefaultApi.md#getStaticMovieScene) | **GET** /movies/{client_movie_id}/static/{timestamp} | One-shot movie scene
+[**postToken**](DefaultApi.md#postToken) | **POST** /token | Token endpoint
 
 
-<a name="cardsCardIdVersionsVersionGet"></a>
-# **cardsCardIdVersionsVersionGet**
-> Card cardsCardIdVersionsVersionGet(authorization, cardId, version, acceptLanguage, contentType, relations, imageSize)
+<a name="getCardVersion"></a>
+# **getCardVersion**
+> Card getCardVersion(authorization, cardId, version, acceptLanguage, contentType, relations, imageSize)
 
 Full card detail
 
@@ -34,10 +34,10 @@ String contentType = "contentType_example"; // String | application/json
 Boolean relations = false; // Boolean | Indicates if the received scene cards should contain the scene hierarchy (true) or be a flat list of the main scene items (false)
 String imageSize = "m"; // String | Size of the images returned in the response
 try {
-    Card result = apiInstance.cardsCardIdVersionsVersionGet(authorization, cardId, version, acceptLanguage, contentType, relations, imageSize);
+    Card result = apiInstance.getCardVersion(authorization, cardId, version, acceptLanguage, contentType, relations, imageSize);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling DefaultApi#cardsCardIdVersionsVersionGet");
+    System.err.println("Exception when calling DefaultApi#getCardVersion");
     e.printStackTrace();
 }
 ```
@@ -67,9 +67,9 @@ No authorization required
  - **Content-Type**: application/json
  - **Accept**: application/json
 
-<a name="channelsChannelIdListReadyGet"></a>
-# **channelsChannelIdListReadyGet**
-> List&lt;ChannelStatus&gt; channelsChannelIdListReadyGet(authorization, channelIdList, acceptLanguage, contentType)
+<a name="getReadyChannels"></a>
+# **getReadyChannels**
+> List&lt;ChannelStatus&gt; getReadyChannels(authorization, channelIdList, acceptLanguage, contentType)
 
 Channel sync availability
 
@@ -86,10 +86,10 @@ List<String> channelIdList = Arrays.asList("channelIdList_example"); // List<Str
 String acceptLanguage = "acceptLanguage_example"; // String | Client locale, as <language>-<country>
 String contentType = "contentType_example"; // String | application/json
 try {
-    List<ChannelStatus> result = apiInstance.channelsChannelIdListReadyGet(authorization, channelIdList, acceptLanguage, contentType);
+    List<ChannelStatus> result = apiInstance.getReadyChannels(authorization, channelIdList, acceptLanguage, contentType);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling DefaultApi#channelsChannelIdListReadyGet");
+    System.err.println("Exception when calling DefaultApi#getReadyChannels");
     e.printStackTrace();
 }
 ```
@@ -116,9 +116,58 @@ No authorization required
  - **Content-Type**: application/json
  - **Accept**: application/json
 
-<a name="channelsChannelIdStaticGet"></a>
-# **channelsChannelIdStaticGet**
-> List&lt;Card&gt; channelsChannelIdStaticGet(authorization, channelId, acceptLanguage, contentType, relations, imageSize)
+<a name="getReadyMovies"></a>
+# **getReadyMovies**
+> List&lt;MovieStatus&gt; getReadyMovies(authorization, clientMovieIdList, acceptLanguage, contentType)
+
+Movie sync availability
+
+Checks whether a list of client movie identifiers (Video On Demand) are available to be synchronized using the Dive API
+
+### Example
+```java
+// Import classes:
+//import io.swagger.client.api.DefaultApi;
+
+DefaultApi apiInstance = new DefaultApi();
+String authorization = "authorization_example"; // String | Authorization token ('Bearer <token>')
+List<String> clientMovieIdList = Arrays.asList("clientMovieIdList_example"); // List<String> | List of client movie IDs, provided as a comma separated list
+String acceptLanguage = "acceptLanguage_example"; // String | Client locale, as <language>-<country>
+String contentType = "contentType_example"; // String | application/json
+try {
+    List<MovieStatus> result = apiInstance.getReadyMovies(authorization, clientMovieIdList, acceptLanguage, contentType);
+    System.out.println(result);
+} catch (ApiException e) {
+    System.err.println("Exception when calling DefaultApi#getReadyMovies");
+    e.printStackTrace();
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **authorization** | **String**| Authorization token (&#39;Bearer &lt;token&gt;&#39;) |
+ **clientMovieIdList** | [**List&lt;String&gt;**](String.md)| List of client movie IDs, provided as a comma separated list |
+ **acceptLanguage** | **String**| Client locale, as &lt;language&gt;-&lt;country&gt; | [optional]
+ **contentType** | **String**| application/json | [optional]
+
+### Return type
+
+[**List&lt;MovieStatus&gt;**](MovieStatus.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+<a name="getStaticChannelScene"></a>
+# **getStaticChannelScene**
+> List&lt;Card&gt; getStaticChannelScene(authorization, channelId, acceptLanguage, contentType, relations, imageSize)
 
 One-shot channel scene
 
@@ -137,10 +186,10 @@ String contentType = "contentType_example"; // String | application/json
 Boolean relations = false; // Boolean | Indicates if the received scene cards should contain the scene hierarchy (true) or be a flat list of the main scene items (false)
 String imageSize = "m"; // String | Size of the images returned in the response
 try {
-    List<Card> result = apiInstance.channelsChannelIdStaticGet(authorization, channelId, acceptLanguage, contentType, relations, imageSize);
+    List<Card> result = apiInstance.getStaticChannelScene(authorization, channelId, acceptLanguage, contentType, relations, imageSize);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling DefaultApi#channelsChannelIdStaticGet");
+    System.err.println("Exception when calling DefaultApi#getStaticChannelScene");
     e.printStackTrace();
 }
 ```
@@ -169,58 +218,9 @@ No authorization required
  - **Content-Type**: application/json
  - **Accept**: application/json
 
-<a name="moviesClientMovieIdListReadyGet"></a>
-# **moviesClientMovieIdListReadyGet**
-> List&lt;MovieStatus&gt; moviesClientMovieIdListReadyGet(authorization, clientMovieIdList, acceptLanguage, contentType)
-
-Movie sync availability
-
-Checks whether a list of client movie identifiers (Video On Demand) are available to be synchronized using the Dive API
-
-### Example
-```java
-// Import classes:
-//import io.swagger.client.api.DefaultApi;
-
-DefaultApi apiInstance = new DefaultApi();
-String authorization = "authorization_example"; // String | Authorization token ('Bearer <token>')
-List<String> clientMovieIdList = Arrays.asList("clientMovieIdList_example"); // List<String> | List of client movie IDs, provided as a comma separated list
-String acceptLanguage = "acceptLanguage_example"; // String | Client locale, as <language>-<country>
-String contentType = "contentType_example"; // String | application/json
-try {
-    List<MovieStatus> result = apiInstance.moviesClientMovieIdListReadyGet(authorization, clientMovieIdList, acceptLanguage, contentType);
-    System.out.println(result);
-} catch (ApiException e) {
-    System.err.println("Exception when calling DefaultApi#moviesClientMovieIdListReadyGet");
-    e.printStackTrace();
-}
-```
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **authorization** | **String**| Authorization token (&#39;Bearer &lt;token&gt;&#39;) |
- **clientMovieIdList** | [**List&lt;String&gt;**](String.md)| List of client movie IDs, provided as a comma separated list |
- **acceptLanguage** | **String**| Client locale, as &lt;language&gt;-&lt;country&gt; | [optional]
- **contentType** | **String**| application/json | [optional]
-
-### Return type
-
-[**List&lt;MovieStatus&gt;**](MovieStatus.md)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
- - **Content-Type**: application/json
- - **Accept**: application/json
-
-<a name="moviesClientMovieIdStaticTimestampGet"></a>
-# **moviesClientMovieIdStaticTimestampGet**
-> List&lt;Card&gt; moviesClientMovieIdStaticTimestampGet(authorization, clientMovieId, timestamp, acceptLanguage, contentType, relations, imageSize)
+<a name="getStaticMovieScene"></a>
+# **getStaticMovieScene**
+> List&lt;Card&gt; getStaticMovieScene(authorization, clientMovieId, timestamp, acceptLanguage, contentType, relations, imageSize)
 
 One-shot movie scene
 
@@ -240,10 +240,10 @@ String contentType = "contentType_example"; // String | application/json
 Boolean relations = false; // Boolean | Indicates if the received scene cards should contain the scene hierarchy (true) or be a flat list of the main scene items (false)
 String imageSize = "m"; // String | Size of the images returned in the response
 try {
-    List<Card> result = apiInstance.moviesClientMovieIdStaticTimestampGet(authorization, clientMovieId, timestamp, acceptLanguage, contentType, relations, imageSize);
+    List<Card> result = apiInstance.getStaticMovieScene(authorization, clientMovieId, timestamp, acceptLanguage, contentType, relations, imageSize);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling DefaultApi#moviesClientMovieIdStaticTimestampGet");
+    System.err.println("Exception when calling DefaultApi#getStaticMovieScene");
     e.printStackTrace();
 }
 ```
@@ -273,9 +273,9 @@ No authorization required
  - **Content-Type**: application/json
  - **Accept**: application/json
 
-<a name="tokenPost"></a>
-# **tokenPost**
-> AccessToken tokenPost(authorization, grantType, acceptLanguage, contentType, deviceId, refreshToken)
+<a name="postToken"></a>
+# **postToken**
+> AccessToken postToken(authorization, grantType, acceptLanguage, contentType, deviceId, refreshToken)
 
 Token endpoint
 
@@ -294,10 +294,10 @@ String contentType = "contentType_example"; // String | application/json
 String deviceId = "deviceId_example"; // String | Device identifier, must uniquely identify the user or device accessing the API. Required only for \"device_credentials\" grant type
 String refreshToken = "refreshToken_example"; // String | Refresh token, used to issue a new token without resending client credentials. Required only for \"refresh_token\" grant type
 try {
-    AccessToken result = apiInstance.tokenPost(authorization, grantType, acceptLanguage, contentType, deviceId, refreshToken);
+    AccessToken result = apiInstance.postToken(authorization, grantType, acceptLanguage, contentType, deviceId, refreshToken);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling DefaultApi#tokenPost");
+    System.err.println("Exception when calling DefaultApi#postToken");
     e.printStackTrace();
 }
 ```

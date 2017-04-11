@@ -11,21 +11,21 @@ import com.google.gson.annotations.SerializedName;
 @ApiModel(description = "Card static data container. It's content depends on the 'type' parameter value and is represented by the schema of the same name")
 public class CardContainer  {
   
-  public enum TypeEnum {
+  public enum TypeOfContainerEnum {
      text,  listing,  rating,  map,  link,  awards,  catalog,  seasons,  image, 
   };
-  @SerializedName("type")
-  private TypeEnum type = null;
+  @SerializedName("typeOfContainer")
+  private TypeOfContainerEnum typeOfContainer = null;
 
   /**
    * Card container format type, determines the format of the 'data' field
    **/
   @ApiModelProperty(required = true, value = "Card container format type, determines the format of the 'data' field")
-  public TypeEnum getType() {
-    return type;
+  public TypeOfContainerEnum getTypeOfContainer() {
+    return typeOfContainer;
   }
-  public void setType(TypeEnum type) {
-    this.type = type;
+  public void setTypeOfContainer(TypeOfContainerEnum typeOfContainer) {
+    this.typeOfContainer = typeOfContainer;
   }
 
 
@@ -38,13 +38,13 @@ public class CardContainer  {
       return false;
     }
     CardContainer cardContainer = (CardContainer) o;
-    return (this.type == null ? cardContainer.type == null : this.type.equals(cardContainer.type));
+    return (this.typeOfContainer == null ? cardContainer.typeOfContainer == null : this.typeOfContainer.equals(cardContainer.typeOfContainer));
   }
 
   @Override
   public int hashCode() {
     int result = 17;
-    result = 31 * result + (type == null ? 0: type.hashCode());
+    result = 31 * result + (typeOfContainer == null ? 0: typeOfContainer.hashCode());
     return result;
   }
 
@@ -53,7 +53,7 @@ public class CardContainer  {
     StringBuilder sb = new StringBuilder();
     sb.append("class CardContainer {\n");
     
-    sb.append("  type: ").append(type).append("\n");
+    sb.append("  typeOfContainer: ").append(typeOfContainer).append("\n");
     sb.append("}\n");
     return sb.toString();
   }

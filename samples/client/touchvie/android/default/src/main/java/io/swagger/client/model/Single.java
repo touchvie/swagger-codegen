@@ -14,11 +14,11 @@ import com.google.gson.annotations.SerializedName;
 @ApiModel(description = "List of related single cards. The relation type is defined by the module content type")
 public class Single extends RelationModule {
   
-  public enum TypeEnum {
+  public enum TypeOfRelationEnum {
      single,  duple, 
   };
-  @SerializedName("type")
-  private TypeEnum type = null;
+  @SerializedName("typeOfRelation")
+  private TypeOfRelationEnum typeOfRelation = null;
   public enum ContentTypeEnum {
      trivias,  directors,  appears_in,  full_looks,  look_fashion,  fashion_set,  full_home,  home_deco,  tracklist,  sounds_in,  is_part_of,  is_chapter_of,  wears, 
   };
@@ -31,11 +31,11 @@ public class Single extends RelationModule {
    * Relation module type, defines the contained data structure
    **/
   @ApiModelProperty(required = true, value = "Relation module type, defines the contained data structure")
-  public TypeEnum getType() {
-    return type;
+  public TypeOfRelationEnum getTypeOfRelation() {
+    return typeOfRelation;
   }
-  public void setType(TypeEnum type) {
-    this.type = type;
+  public void setTypeOfRelation(TypeOfRelationEnum typeOfRelation) {
+    this.typeOfRelation = typeOfRelation;
   }
 
   /**
@@ -69,7 +69,7 @@ public class Single extends RelationModule {
       return false;
     }
     Single single = (Single) o;
-    return (this.type == null ? single.type == null : this.type.equals(single.type)) &&
+    return (this.typeOfRelation == null ? single.typeOfRelation == null : this.typeOfRelation.equals(single.typeOfRelation)) &&
         (this.contentType == null ? single.contentType == null : this.contentType.equals(single.contentType)) &&
         (this.data == null ? single.data == null : this.data.equals(single.data));
   }
@@ -77,7 +77,7 @@ public class Single extends RelationModule {
   @Override
   public int hashCode() {
     int result = 17;
-    result = 31 * result + (type == null ? 0: type.hashCode());
+    result = 31 * result + (typeOfRelation == null ? 0: typeOfRelation.hashCode());
     result = 31 * result + (contentType == null ? 0: contentType.hashCode());
     result = 31 * result + (data == null ? 0: data.hashCode());
     return result;
@@ -88,7 +88,7 @@ public class Single extends RelationModule {
     StringBuilder sb = new StringBuilder();
     sb.append("class Single {\n");
     sb.append("  " + super.toString()).append("\n");
-    sb.append("  type: ").append(type).append("\n");
+    sb.append("  typeOfRelation: ").append(typeOfRelation).append("\n");
     sb.append("  contentType: ").append(contentType).append("\n");
     sb.append("  data: ").append(data).append("\n");
     sb.append("}\n");

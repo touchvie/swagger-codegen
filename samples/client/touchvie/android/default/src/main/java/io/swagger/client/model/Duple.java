@@ -14,11 +14,11 @@ import com.google.gson.annotations.SerializedName;
 @ApiModel(description = "List of related pairs of cards, each pair having a relationship type between both cards")
 public class Duple extends RelationModule {
   
-  public enum TypeEnum {
+  public enum TypeOfRelationEnum {
      single,  duple, 
   };
-  @SerializedName("type")
-  private TypeEnum type = null;
+  @SerializedName("typeOfRelation")
+  private TypeOfRelationEnum typeOfRelation = null;
   public enum ContentTypeEnum {
      casting,  filmography,  played_by,  worn_by,  featured_in, 
   };
@@ -31,11 +31,11 @@ public class Duple extends RelationModule {
    * Relation module type, defines the contained data structure
    **/
   @ApiModelProperty(required = true, value = "Relation module type, defines the contained data structure")
-  public TypeEnum getType() {
-    return type;
+  public TypeOfRelationEnum getTypeOfRelation() {
+    return typeOfRelation;
   }
-  public void setType(TypeEnum type) {
-    this.type = type;
+  public void setTypeOfRelation(TypeOfRelationEnum typeOfRelation) {
+    this.typeOfRelation = typeOfRelation;
   }
 
   /**
@@ -69,7 +69,7 @@ public class Duple extends RelationModule {
       return false;
     }
     Duple duple = (Duple) o;
-    return (this.type == null ? duple.type == null : this.type.equals(duple.type)) &&
+    return (this.typeOfRelation == null ? duple.typeOfRelation == null : this.typeOfRelation.equals(duple.typeOfRelation)) &&
         (this.contentType == null ? duple.contentType == null : this.contentType.equals(duple.contentType)) &&
         (this.data == null ? duple.data == null : this.data.equals(duple.data));
   }
@@ -77,7 +77,7 @@ public class Duple extends RelationModule {
   @Override
   public int hashCode() {
     int result = 17;
-    result = 31 * result + (type == null ? 0: type.hashCode());
+    result = 31 * result + (typeOfRelation == null ? 0: typeOfRelation.hashCode());
     result = 31 * result + (contentType == null ? 0: contentType.hashCode());
     result = 31 * result + (data == null ? 0: data.hashCode());
     return result;
@@ -88,7 +88,7 @@ public class Duple extends RelationModule {
     StringBuilder sb = new StringBuilder();
     sb.append("class Duple {\n");
     sb.append("  " + super.toString()).append("\n");
-    sb.append("  type: ").append(type).append("\n");
+    sb.append("  typeOfRelation: ").append(typeOfRelation).append("\n");
     sb.append("  contentType: ").append(contentType).append("\n");
     sb.append("  data: ").append(data).append("\n");
     sb.append("}\n");

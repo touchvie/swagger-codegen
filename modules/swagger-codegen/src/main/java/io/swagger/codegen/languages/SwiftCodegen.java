@@ -365,14 +365,11 @@ public class SwiftCodegen extends DefaultCodegen implements CodegenConfig {
         }
 
         if (codegenProperty.isEnum) {
-            List<Map<String, String>> swiftEnums = new ArrayList<Map<String, String>>();
+            List<String> swiftEnums = new ArrayList<String>();
             List<String> values = (List<String>) codegenProperty.allowableValues.get("values");
             
             for (Object value : values) {
-                Map<String, String> map = new HashMap<String, String>();
-                map.put("enum", toSwiftyEnumName(String.valueOf(value)));
-                map.put("raw", String.valueOf(value));
-                swiftEnums.add(map);
+                swiftEnums.add(String.valueOf(value));
             }
             codegenProperty.allowableValues.put("values", swiftEnums);
             codegenProperty.datatypeWithEnum = toEnumName(codegenProperty);

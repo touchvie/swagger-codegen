@@ -587,6 +587,39 @@ public class Swift3Codegen extends DefaultCodegen implements CodegenConfig {
         return input.replace("*/", "*_/").replace("/*", "/_*");
     }
 
+    @Override
+    public CodegenProperty fromProperty(String name, Property p) {
+        CodegenProperty codegenProperty = super.fromProperty(name, p);
+        // TODO skip array/map of enum for the time being,
+        // we need to add logic here to handle array/map of enum for any
+        // dimensions
+        if (Boolean.TRUE.equals(codegenProperty.isContainer)) {
+            return codegenProperty;
+        }
+
+        if (codegenProperty.isEnum) {
+            List<String> swiftEnums = new ArrayList<String>();
+            List<String> values = (List<String>) codegenProperty.allowableValues.get("values");
+            
+            for (Object value : values) {
+                swiftEnums.add(String.valueOf(value));
+            }
+
+            codegenProperty.allowableValues.put("values", swiftEnums);
+            codegenProperty.datatypeWithEnum = toEnumName(codegenProperty);
+            //codegenProperty.datatypeWithEnum =
+            //    StringUtils.left(codegenProperty.datatypeWithEnum, codegenProperty.datatypeWithEnum.length() - "Enum".length());
+ 
+            // Ensure that the enum type doesn't match a reserved word or
+            // the variable name doesn't match the generated enum type or the
+            // Swift compiler will generate an error
+            if (isReservedWord(codegenProperty.datatypeWithEnum) || toVarName(name).equals(codegenProperty.datatypeWithEnum)) {
+                codegenProperty.datatypeWithEnum = codegenProperty.datatypeWithEnum + "Enum";
+            }
+        }
+        return codegenProperty;
+    }
+
     private static CodegenModel reconcileProperties(CodegenModel codegenModel, CodegenModel parentCodegenModel) {
         // To support inheritance in this generator, we will analyze
         // the parent and child models, look for properties that match, and remove

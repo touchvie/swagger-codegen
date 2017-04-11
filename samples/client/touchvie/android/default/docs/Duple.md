@@ -4,13 +4,13 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**type** | [**TypeEnum**](#TypeEnum) | Relation module type, defines the contained data structure | 
+**typeOfRelation** | [**TypeOfRelationEnum**](#TypeOfRelationEnum) | Relation module type, defines the contained data structure | 
 **contentType** | [**ContentTypeEnum**](#ContentTypeEnum) | Duple module content type, defines what kind of relations are contained in the module | 
 **data** | [**List&lt;DupleData&gt;**](DupleData.md) |  | 
 
 
-<a name="TypeEnum"></a>
-## Enum: TypeEnum
+<a name="TypeOfRelationEnum"></a>
+## Enum: TypeOfRelationEnum
 Name | Value
 ---- | -----
 

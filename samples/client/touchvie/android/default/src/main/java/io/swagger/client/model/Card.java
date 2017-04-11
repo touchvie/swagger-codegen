@@ -19,11 +19,11 @@ public class Card  {
   private String cardId = null;
   @SerializedName("version")
   private String version = null;
-  public enum TypeEnum {
+  public enum TypeOfCardEnum {
      movie,  serie,  person,  character,  vehicle,  fashion,  location,  historic,  trivia,  quote,  ost,  home,  technology,  art,  song,  look,  weapon,  leisure_sport,  health_beauty,  food_drink,  fauna_flora,  business,  reference,  chapter, 
   };
-  @SerializedName("type")
-  private TypeEnum type = null;
+  @SerializedName("typeOfCard")
+  private TypeOfCardEnum typeOfCard = null;
   @SerializedName("locale")
   private String locale = null;
   @SerializedName("title")
@@ -63,11 +63,11 @@ public class Card  {
    * Card type
    **/
   @ApiModelProperty(required = true, value = "Card type")
-  public TypeEnum getType() {
-    return type;
+  public TypeOfCardEnum getTypeOfCard() {
+    return typeOfCard;
   }
-  public void setType(TypeEnum type) {
-    this.type = type;
+  public void setTypeOfCard(TypeOfCardEnum typeOfCard) {
+    this.typeOfCard = typeOfCard;
   }
 
   /**
@@ -145,7 +145,7 @@ public class Card  {
     Card card = (Card) o;
     return (this.cardId == null ? card.cardId == null : this.cardId.equals(card.cardId)) &&
         (this.version == null ? card.version == null : this.version.equals(card.version)) &&
-        (this.type == null ? card.type == null : this.type.equals(card.type)) &&
+        (this.typeOfCard == null ? card.typeOfCard == null : this.typeOfCard.equals(card.typeOfCard)) &&
         (this.locale == null ? card.locale == null : this.locale.equals(card.locale)) &&
         (this.title == null ? card.title == null : this.title.equals(card.title)) &&
         (this.subtitle == null ? card.subtitle == null : this.subtitle.equals(card.subtitle)) &&
@@ -159,7 +159,7 @@ public class Card  {
     int result = 17;
     result = 31 * result + (cardId == null ? 0: cardId.hashCode());
     result = 31 * result + (version == null ? 0: version.hashCode());
-    result = 31 * result + (type == null ? 0: type.hashCode());
+    result = 31 * result + (typeOfCard == null ? 0: typeOfCard.hashCode());
     result = 31 * result + (locale == null ? 0: locale.hashCode());
     result = 31 * result + (title == null ? 0: title.hashCode());
     result = 31 * result + (subtitle == null ? 0: subtitle.hashCode());
@@ -176,7 +176,7 @@ public class Card  {
     
     sb.append("  cardId: ").append(cardId).append("\n");
     sb.append("  version: ").append(version).append("\n");
-    sb.append("  type: ").append(type).append("\n");
+    sb.append("  typeOfCard: ").append(typeOfCard).append("\n");
     sb.append("  locale: ").append(locale).append("\n");
     sb.append("  title: ").append(title).append("\n");
     sb.append("  subtitle: ").append(subtitle).append("\n");
