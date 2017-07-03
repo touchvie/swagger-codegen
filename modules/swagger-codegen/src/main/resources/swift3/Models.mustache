@@ -45,7 +45,7 @@ class Decoders {
     }
 
     static func decode<T>(clazz: T.Type, discriminator: String, source: AnyObject) -> T {
-        let key = discriminator;
+        let key = discriminator.capitalized;
         if let decoder = decoders[key] {
             return decoder(source) as! T
         } else {
