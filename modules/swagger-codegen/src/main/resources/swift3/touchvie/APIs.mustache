@@ -11,6 +11,11 @@ open class {{projectName}}API {
     open static var credential: URLCredential?
     open static var customHeaders: [String:String] = [:]
     static var requestBuilderFactory: RequestBuilderFactory = AlamofireRequestBuilderFactory()
+
+    func setBasePath(_path : String){
+        iOSSwaggerClientAPI.basePath = _path;
+    }
+
 }
 
 open class APIBase {
