@@ -45,6 +45,22 @@ let DIVE_TABLET_IOS = "Basic " + "dive_tablet_ios:NTKnUb7ioj98yVn3qa3VN7TPXmrLdb
 let EMDT_MOBILE_IOS = "Basic " + "emdt_mobile_ios:NHMqijosE7iErP99z4YmyQEf6qtNbBK4".toBase64();
 let EMDT_TABLET_IOS = "Basic " + "emdt_tablet_ios:Cj2vxMukjkVEadep8FSJ9sUUcg5JEAKz".toBase64();
 
+
+enum Device: CustomStringConvertible {
+    
+    case iPhoneDive, iPadDive, iPhoneEMDT, iPadEMDT
+    
+    var description: String {
+        
+        switch self {
+        case .iPhoneDive: return "Basic " + "dive_mobile_ios:zrCyEz2qZHRzEWXZkGHxjUB53xhtKjdR".toBase64()
+        case .iPadDive: return "Basic " + "dive_tablet_ios:NTKnUb7ioj98yVn3qa3VN7TPXmrLdbeN".toBase64()
+        case .iPhoneEMDT: return "Basic " + "emdt_mobile_ios:NHMqijosE7iErP99z4YmyQEf6qtNbBK4".toBase64()
+        case .iPadEMDT: return "Basic " + "emdt_tablet_ios:Cj2vxMukjkVEadep8FSJ9sUUcg5JEAKz".toBase64()
+        }
+    }
+}
+
 //CUSTOM ERRORS
 protocol DiveErrorProtocol: Error {
     
