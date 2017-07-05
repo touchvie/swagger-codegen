@@ -53,10 +53,10 @@ enum Device: CustomStringConvertible {
     var description: String {
         
         switch self {
-        case .iPhoneDive: return "Basic " + "dive_mobile_ios:zrCyEz2qZHRzEWXZkGHxjUB53xhtKjdR".toBase64()
-        case .iPadDive: return "Basic " + "dive_tablet_ios:NTKnUb7ioj98yVn3qa3VN7TPXmrLdbeN".toBase64()
-        case .iPhoneEMDT: return "Basic " + "emdt_mobile_ios:NHMqijosE7iErP99z4YmyQEf6qtNbBK4".toBase64()
-        case .iPadEMDT: return "Basic " + "emdt_tablet_ios:Cj2vxMukjkVEadep8FSJ9sUUcg5JEAKz".toBase64()
+        case .iPhoneDive: return DIVE_MOBILE_IOS
+        case .iPadDive: return DIVE_TABLET_IOS
+        case .iPhoneEMDT: return EMDT_MOBILE_IOS
+        case .iPadEMDT: return EMDT_TABLET_IOS
         }
     }
 }
@@ -76,12 +76,14 @@ struct TokenWithoutGrantType: DiveErrorProtocol {
     var code: Int = 1;
 }
 
-public class UserAgentData{
-    
-    enum AppName: String {
+public enum AppName: String {
         case DIVE = "dive"
         case EMDT = "emdt"
     }
+
+public class UserAgentData{
+    
+    
     
     public var appName : String;
     public var appVersion : String;
@@ -90,9 +92,9 @@ public class UserAgentData{
     public var deviceModel : String;
     public var deviceLocale : String;
     
-    init(_appName : AppName){
+    init(){
     
-        self.appName = _appName.rawValue;
+        self.appName = DiveAPI.appType.rawValue
         self.appVersion = APIHelper.getAppVersion();
         self.OSVersion = APIHelper.getOSVersion();
         self.deviceModel = APIHelper.getDeviceModel();
@@ -115,17 +117,13 @@ class APIHelper {
         return UIDevice.current.modelName;
     }
     
-    static func getUserAgent(_appName : UserAgentData.AppName)->String{
+     static func getUserAgent()->String{
         
-        let userAgentData = UserAgentData(_appName: _appName);
+        let userAgentData = UserAgentData();
         
         let userAgentString = userAgentData.appName + "/" + userAgentData.appVersion + "/" + userAgentData.OS + "/" + userAgentData.OSVersion + "/" + userAgentData.deviceModel + "/" + userAgentData.deviceLocale;
         
         return userAgentString;
-    }
-
-    static func getUserAgent()->String{
-        return "";
     }
 
     static func rejectNil(_ source: [String:Any?]) -> [String:Any]? {
@@ -251,14 +249,36 @@ public class AuthManager: NSObject {
     
     private static var autorization : String?;
     
-    public class func setAutorization(_authHeader : String){
-        self.autorization = _authHeader;
+     class func setAutorization(){
+        
+        
+        switch DiveAPI.appType {
+            
+        case .DIVE:
+            if APIHelper.getDeviceModel().contains("iPad") {
+                self.autorization = Device.iPadDive.description
+            }else{
+               self.autorization = Device.iPhoneDive.description
+            }
+            break
+            
+        case .EMDT:
+            if APIHelper.getDeviceModel().contains("iPad") {
+                self.autorization = Device.iPadEMDT.description
+            }else{
+               self.autorization = Device.iPhoneEMDT.description
+            }
+            break
+        }
     }
 
     public class func postToken(_deviceID : String? = nil, _userName : String? = nil, _password : String? = nil, _fbToken : String? = nil, _googleToken : String? = nil, _completion: @escaping ((_ _response : Response<AccessTokenResponse>?, _ _error : Error?) -> Void)){
         
-        //let _authorization = "emdt_mobile_ios:NHMqijosE7iErP99z4YmyQEf6qtNbBK4".toBase64();
-       
+          if (self.autorization == nil) {
+           
+            self.setAutorization()
+            
+        }
         
         var _grantType : DiveAPI.grantType_postToken? = nil;
         var _authData = AuthData();

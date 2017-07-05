@@ -17,11 +17,19 @@ extension {{projectName}}API {
 /** {{description}} */{{/description}}
 open class DiveAPI: APIBase {
 
+
+ static var appType: AppName = .DIVE {
+        
+        didSet {
+            AuthManager.setAutorization()
+        }
+    }
+
     private static var commonHeaders : [String: String] = ["Content-Type" : "application/json",
                                                            "Accept-Language" : APIHelper.getLanguage(),
                                                            "Accept-Encoding" : "gzip",
                                                            "Connection" : "keep-alive",
-                                                           "User-Agent": APIHelper.getUserAgent(_appName: UserAgentData.AppName.EMDT)];
+                                                           "User-Agent": APIHelper.getUserAgent()];
     
     open class func updateTokenCommonHeader(){
         self.commonHeaders["Authorization"] = AuthManager.getDiveToken();
@@ -100,26 +108,6 @@ open class DiveAPI: APIBase {
             rb.addHeaders(_headers!);
         }
 
-          if path == "/token" {
-           
-            if (commonHeaders["User-Agent"]?.contains("dive")) != nil {
-                
-                if APIHelper.getDeviceModel().contains("iPad") {
-                    rb.addHeaders( ["Authorization" :Device.iPadDive.description])
-                }else{
-                    rb.addHeaders( ["Authorization" :Device.iPhoneDive.description])
-                }
-                
-            }else{
-                if APIHelper.getDeviceModel().contains("iPad") {
-                    rb.addHeaders( ["Authorization" :Device.iPadEMDT.description])
-                }else{
-                    rb.addHeaders( ["Authorization" :Device.iPhoneEMDT.description])
-                }
-            }
- 
-        }
-
         rb.execute ({ (_response : Response<{{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}Void{{/returnType}}>?, _error : Error?) in
             
             print(_error as Any);
@@ -127,11 +115,6 @@ open class DiveAPI: APIBase {
             
             //if response its good, complete the request
             if(_response != nil){
-
-            if path == "/token" {
-              AuthManager.saveDiveTokenInKeyChain(token: "Bearer " + _response!.body!.accessToken!)
-                DiveAPI.updateTokenCommonHeader()
-            }
                 _completion(_response, _error);
             }else
             //if there is an error, check the error response
