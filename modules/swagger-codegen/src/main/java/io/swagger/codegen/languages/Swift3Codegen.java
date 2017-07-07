@@ -5,6 +5,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import io.swagger.codegen.*;
 import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.HeaderParameter;
@@ -38,15 +39,16 @@ public class Swift3Codegen extends DefaultCodegen implements CodegenConfig {
     public static final String POD_DOCUMENTATION_URL = "podDocumentationURL";
     public static final String SWIFT_USE_API_NAMESPACE = "swiftUseApiNamespace";
     public static final String DEFAULT_POD_AUTHORS = "Swagger Codegen";
+    public static final String LENIENT_TYPE_CAST = "lenientTypeCast";
     protected static final String LIBRARY_PROMISE_KIT = "PromiseKit";
     protected static final String LIBRARY_RX_SWIFT = "RxSwift";
     protected static final String[] RESPONSE_LIBRARIES = {LIBRARY_PROMISE_KIT, LIBRARY_RX_SWIFT};
     protected String projectName = "SwaggerClient";
     protected boolean unwrapRequired;
+    protected boolean lenientTypeCast = false;
     protected boolean swiftUseApiNamespace;
     protected String[] responseAs = new String[0];
     protected String sourceFolder = "Classes" + File.separator + "Swaggers";
-    private static final Pattern PATH_PARAM_PATTERN = Pattern.compile("\\{[a-zA-Z_]+\\}");
 
     @Override
     public CodegenType getTag() {
@@ -61,6 +63,16 @@ public class Swift3Codegen extends DefaultCodegen implements CodegenConfig {
     @Override
     public String getHelp() {
         return "Generates a swift client library.";
+    }
+
+    @Override
+    protected void addAdditionPropertiesToCodeGenModel(CodegenModel codegenModel, ModelImpl swaggerModel) {
+
+        final Property additionalProperties = swaggerModel.getAdditionalProperties();
+
+        if(additionalProperties != null) {
+            codegenModel.additionalPropertiesType = getSwaggerType(additionalProperties);
+        }
     }
 
     public Swift3Codegen() {
@@ -103,7 +115,7 @@ public class Swift3Codegen extends DefaultCodegen implements CodegenConfig {
         reservedWords = new HashSet<>(
                 Arrays.asList(
                     // name used by swift client
-                    "ErrorResponse",
+                    "ErrorResponse", "Response",
 
                     // swift keywords
                     "Int", "Int32", "Int64", "Int64", "Float", "Double", "Bool", "Void", "String", "Character", "AnyObject", "Any", "Error", "URL",
@@ -161,12 +173,14 @@ public class Swift3Codegen extends DefaultCodegen implements CodegenConfig {
         cliOptions.add(new CliOption(SWIFT_USE_API_NAMESPACE, "Flag to make all the API classes inner-class of {{projectName}}API"));
         cliOptions.add(new CliOption(CodegenConstants.HIDE_GENERATION_TIMESTAMP, "hides the timestamp when files were generated")
                 .defaultValue(Boolean.TRUE.toString()));
-
+        cliOptions.add(new CliOption(LENIENT_TYPE_CAST, "Accept and cast values for simple types (string->bool, string->int, int->string)")
+                .defaultValue(Boolean.FALSE.toString()));
     }
 
     @Override
     public void processOpts() {
         super.processOpts();
+
         // default HIDE_GENERATION_TIMESTAMP to true
         if (!additionalProperties.containsKey(CodegenConstants.HIDE_GENERATION_TIMESTAMP)) {
             additionalProperties.put(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
@@ -185,7 +199,7 @@ public class Swift3Codegen extends DefaultCodegen implements CodegenConfig {
 
         // Setup unwrapRequired option, which makes all the properties with "required" non-optional
         if (additionalProperties.containsKey(UNWRAP_REQUIRED)) {
-            setUnwrapRequired(Boolean.parseBoolean(String.valueOf(additionalProperties.get(UNWRAP_REQUIRED))));
+            setUnwrapRequired(convertPropertyToBooleanAndWriteBack(UNWRAP_REQUIRED));
         }
         additionalProperties.put(UNWRAP_REQUIRED, unwrapRequired);
 
@@ -208,19 +222,21 @@ public class Swift3Codegen extends DefaultCodegen implements CodegenConfig {
 
         // Setup swiftUseApiNamespace option, which makes all the API classes inner-class of {{projectName}}API
         if (additionalProperties.containsKey(SWIFT_USE_API_NAMESPACE)) {
-            swiftUseApiNamespace = Boolean.parseBoolean(String.valueOf(additionalProperties.get(SWIFT_USE_API_NAMESPACE)));
+            setSwiftUseApiNamespace(convertPropertyToBooleanAndWriteBack(SWIFT_USE_API_NAMESPACE));
         }
-        additionalProperties.put(SWIFT_USE_API_NAMESPACE, swiftUseApiNamespace);
 
         if (!additionalProperties.containsKey(POD_AUTHORS)) {
             additionalProperties.put(POD_AUTHORS, DEFAULT_POD_AUTHORS);
         }
+
+        setLenientTypeCast(convertPropertyToBooleanAndWriteBack(LENIENT_TYPE_CAST));
 
         supportingFiles.add(new SupportingFile("Podspec.mustache", "", projectName + ".podspec"));
         supportingFiles.add(new SupportingFile("Cartfile.mustache", "", "Cartfile"));
         supportingFiles.add(new SupportingFile("APIHelper.mustache", sourceFolder, "APIHelper.swift"));
         supportingFiles.add(new SupportingFile("AlamofireImplementations.mustache", sourceFolder,
                 "AlamofireImplementations.swift"));
+        supportingFiles.add(new SupportingFile("Configuration.mustache", sourceFolder, "Configuration.swift"));
         supportingFiles.add(new SupportingFile("Extensions.mustache", sourceFolder, "Extensions.swift"));
         supportingFiles.add(new SupportingFile("Models.mustache", sourceFolder, "Models.swift"));
         supportingFiles.add(new SupportingFile("APIs.mustache", sourceFolder, "APIs.swift"));
@@ -277,6 +293,11 @@ public class Swift3Codegen extends DefaultCodegen implements CodegenConfig {
         } else
             type = swaggerType;
         return toModelName(type);
+    }
+
+    @Override
+    public boolean isDataTypeFile(String dataType) {
+        return dataType != null && dataType.equals("URL");
     }
 
     @Override
@@ -346,7 +367,7 @@ public class Swift3Codegen extends DefaultCodegen implements CodegenConfig {
         if (p instanceof MapProperty) {
             MapProperty ap = (MapProperty) p;
             String inner = getSwaggerType(ap.getAdditionalProperties());
-            return "[String:" + inner + "]";
+            return inner;
         } else if (p instanceof ArrayProperty) {
             ArrayProperty ap = (ArrayProperty) p;
             String inner = getSwaggerType(ap.getItems());
@@ -451,40 +472,6 @@ public class Swift3Codegen extends DefaultCodegen implements CodegenConfig {
         return codegenModel;
     }
 
-    @Override
-    public CodegenOperation fromOperation(String path, String httpMethod, Operation operation, Map<String, Model> definitions, Swagger swagger) {
-        path = normalizePath(path); // FIXME: a parameter should not be assigned. Also declare the methods parameters as 'final'.
-        // issue 3914 - removed logic designed to remove any parameter of type HeaderParameter
-        return super.fromOperation(path, httpMethod, operation, definitions, swagger);
-    }
-
-    private static String normalizePath(String path) {
-        StringBuilder builder = new StringBuilder();
-
-        int cursor = 0;
-        Matcher matcher = PATH_PARAM_PATTERN.matcher(path);
-        boolean found = matcher.find();
-        while (found) {
-            String stringBeforeMatch = path.substring(cursor, matcher.start());
-            builder.append(stringBeforeMatch);
-
-            String group = matcher.group().substring(1, matcher.group().length() - 1);
-            group = camelize(group, true);
-            builder
-                    .append("{")
-                    .append(group)
-                    .append("}");
-
-            cursor = matcher.end();
-            found = matcher.find();
-        }
-
-        String stringAfterMatch = path.substring(cursor);
-        builder.append(stringAfterMatch);
-
-        return builder.toString();
-    }
-
     public void setProjectName(String projectName) {
         this.projectName = projectName;
     }
@@ -493,8 +480,16 @@ public class Swift3Codegen extends DefaultCodegen implements CodegenConfig {
         this.unwrapRequired = unwrapRequired;
     }
 
+    public void setLenientTypeCast(boolean lenientTypeCast) {
+        this.lenientTypeCast = lenientTypeCast;
+    }
+
     public void setResponseAs(String[] responseAs) {
         this.responseAs = responseAs;
+    }
+
+    public void setSwiftUseApiNamespace(boolean swiftUseApiNamespace) {
+        this.swiftUseApiNamespace = swiftUseApiNamespace;
     }
 
     @Override
@@ -511,6 +506,15 @@ public class Swift3Codegen extends DefaultCodegen implements CodegenConfig {
     public String toEnumVarName(String name, String datatype) {
         if (name.length() == 0) {
             return "empty";
+        }
+
+        Pattern startWithNumberPattern = Pattern.compile("^\\d+");
+        Matcher startWithNumberMatcher = startWithNumberPattern.matcher(name);
+        if (startWithNumberMatcher.find()) {
+            String startingNumbers = startWithNumberMatcher.group(0);
+            String nameWithoutStartingNumbers = name.substring(startingNumbers.length());
+
+            return "_" + startingNumbers + camelize(nameWithoutStartingNumbers, true);
         }
 
         // for symbol, e.g. $, #
@@ -585,39 +589,6 @@ public class Swift3Codegen extends DefaultCodegen implements CodegenConfig {
     @Override
     public String escapeUnsafeCharacters(String input) {
         return input.replace("*/", "*_/").replace("/*", "/_*");
-    }
-
-    @Override
-    public CodegenProperty fromProperty(String name, Property p) {
-        CodegenProperty codegenProperty = super.fromProperty(name, p);
-        // TODO skip array/map of enum for the time being,
-        // we need to add logic here to handle array/map of enum for any
-        // dimensions
-        if (Boolean.TRUE.equals(codegenProperty.isContainer)) {
-            return codegenProperty;
-        }
-
-        if (codegenProperty.isEnum) {
-            List<String> swiftEnums = new ArrayList<String>();
-            List<String> values = (List<String>) codegenProperty.allowableValues.get("values");
-            
-            for (Object value : values) {
-                swiftEnums.add(String.valueOf(value));
-            }
-
-            codegenProperty.allowableValues.put("values", swiftEnums);
-            codegenProperty.datatypeWithEnum = toEnumName(codegenProperty);
-            //codegenProperty.datatypeWithEnum =
-            //    StringUtils.left(codegenProperty.datatypeWithEnum, codegenProperty.datatypeWithEnum.length() - "Enum".length());
- 
-            // Ensure that the enum type doesn't match a reserved word or
-            // the variable name doesn't match the generated enum type or the
-            // Swift compiler will generate an error
-            if (isReservedWord(codegenProperty.datatypeWithEnum) || toVarName(name).equals(codegenProperty.datatypeWithEnum)) {
-                codegenProperty.datatypeWithEnum = codegenProperty.datatypeWithEnum + "Enum";
-            }
-        }
-        return codegenProperty;
     }
 
     private static CodegenModel reconcileProperties(CodegenModel codegenModel, CodegenModel parentCodegenModel) {

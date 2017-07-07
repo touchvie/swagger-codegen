@@ -34,7 +34,12 @@ export class BaseAPI {
  * {{{description}}}
  */
 {{/description}}
+{{^isEnum}}
 export interface {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{
+{{/isEnum}}
+{{#isEnum}}
+export type {{{classname}}} = {{#allowableValues}}{{#values}}"{{{.}}}"{{^-last}} | {{/-last}}{{/values}}{{/allowableValues}};
+{{/isEnum}}
 {{#vars}}
 {{#description}}
     /**
@@ -43,7 +48,9 @@ export interface {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{
 {{/description}}
     "{{name}}"{{^required}}?{{/required}}: {{#isEnum}}{{{datatypeWithEnum}}}{{/isEnum}}{{^isEnum}}{{{datatype}}}{{/isEnum}};
 {{/vars}}
+{{^isEnum}}
 }
+{{/isEnum}}
 
 {{#hasEnums}}
 {{#vars}}
@@ -79,7 +86,7 @@ export const {{classname}}FetchParamCreator = {
         }
 {{/required}}
 {{/allParams}}
-        const baseUrl = `{{path}}`{{#pathParams}}
+        const baseUrl = `{{{path}}}`{{#pathParams}}
             .replace(`{${"{{baseName}}"}}`, `${ params["{{paramName}}"] }`){{/pathParams}};
         let urlObj = url.parse(baseUrl, true);
 {{#hasQueryParams}}
@@ -109,11 +116,11 @@ export const {{classname}}FetchParamCreator = {
 {{#hasHeaderParams}}
         fetchOptions.headers = {{#supportsES6}}Object.{{/supportsES6}}assign({
             {{#headerParams}}"{{baseName}}": params["{{paramName}}"],{{/headerParams}}
-        }, contentTypeHeader);
+        }, contentTypeHeader, fetchOptions.headers);
 {{/hasHeaderParams}}
 {{^hasHeaderParams}}
         if (contentTypeHeader) {
-            fetchOptions.headers = contentTypeHeader;
+            fetchOptions.headers = {{#supportsES6}}Object.{{/supportsES6}}assign({}, contentTypeHeader, fetchOptions.headers);
         }
 {{/hasHeaderParams}}
         return {

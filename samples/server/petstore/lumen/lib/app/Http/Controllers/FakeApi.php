@@ -101,19 +101,19 @@ class FakeApi extends Controller
         }
         $byte = $input['byte'];
 
-        if ($input['integer'] > 100.0) {
-            throw new \InvalidArgumentException('invalid value for $integer when calling FakeApi.testEndpointParameters, must be smaller than or equal to 100.0.');
+        if ($input['integer'] > 100) {
+            throw new \InvalidArgumentException('invalid value for $integer when calling FakeApi.testEndpointParameters, must be smaller than or equal to 100.');
         }
-        if ($input['integer'] < 10.0) {
-            throw new \InvalidArgumentException('invalid value for $integer when calling FakeApi.testEndpointParameters, must be bigger than or equal to 10.0.');
+        if ($input['integer'] < 10) {
+            throw new \InvalidArgumentException('invalid value for $integer when calling FakeApi.testEndpointParameters, must be bigger than or equal to 10.');
         }
         $integer = $input['integer'];
 
-        if ($input['int32'] > 200.0) {
-            throw new \InvalidArgumentException('invalid value for $int32 when calling FakeApi.testEndpointParameters, must be smaller than or equal to 200.0.');
+        if ($input['int32'] > 200) {
+            throw new \InvalidArgumentException('invalid value for $int32 when calling FakeApi.testEndpointParameters, must be smaller than or equal to 200.');
         }
-        if ($input['int32'] < 20.0) {
-            throw new \InvalidArgumentException('invalid value for $int32 when calling FakeApi.testEndpointParameters, must be bigger than or equal to 20.0.');
+        if ($input['int32'] < 20) {
+            throw new \InvalidArgumentException('invalid value for $int32 when calling FakeApi.testEndpointParameters, must be bigger than or equal to 20.');
         }
         $int32 = $input['int32'];
 
@@ -182,5 +182,89 @@ class FakeApi extends Controller
 
 
         return response('How about implementing testEnumParameters as a GET method ?');
+    }
+    /**
+     * Operation fakeOuterBooleanSerialize
+     *
+     * .
+     *
+     *
+     * @return Http response
+     */
+    public function fakeOuterBooleanSerialize()
+    {
+        $input = Request::all();
+
+        //path params validation
+
+
+        //not path params validation
+        $body = $input['body'];
+
+
+        return response('How about implementing fakeOuterBooleanSerialize as a POST method ?');
+    }
+    /**
+     * Operation fakeOuterCompositeSerialize
+     *
+     * .
+     *
+     *
+     * @return Http response
+     */
+    public function fakeOuterCompositeSerialize()
+    {
+        $input = Request::all();
+
+        //path params validation
+
+
+        //not path params validation
+        $body = $input['body'];
+
+
+        return response('How about implementing fakeOuterCompositeSerialize as a POST method ?');
+    }
+    /**
+     * Operation fakeOuterNumberSerialize
+     *
+     * .
+     *
+     *
+     * @return Http response
+     */
+    public function fakeOuterNumberSerialize()
+    {
+        $input = Request::all();
+
+        //path params validation
+
+
+        //not path params validation
+        $body = $input['body'];
+
+
+        return response('How about implementing fakeOuterNumberSerialize as a POST method ?');
+    }
+    /**
+     * Operation fakeOuterStringSerialize
+     *
+     * .
+     *
+     *
+     * @return Http response
+     */
+    public function fakeOuterStringSerialize()
+    {
+        $input = Request::all();
+
+        //path params validation
+
+
+        //not path params validation
+        $body = $input['body'];
+
+
+        return response('How about implementing fakeOuterStringSerialize as a POST method ?');
     }
 }
