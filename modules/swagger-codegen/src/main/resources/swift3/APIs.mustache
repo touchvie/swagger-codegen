@@ -7,10 +7,15 @@
 import Foundation
 
 open class {{projectName}}API {
-    open static var basePath = "{{{basePath}}}"
+    open static var basePath = "{{basePath}}"
     open static var credential: URLCredential?
     open static var customHeaders: [String:String] = [:]
-    open static var requestBuilderFactory: RequestBuilderFactory = AlamofireRequestBuilderFactory()
+    static var requestBuilderFactory: RequestBuilderFactory = AlamofireRequestBuilderFactory()
+
+    func setBasePath(_path : String){
+        iOSSwaggerClientAPI.basePath = _path;
+    }
+
 }
 
 open class APIBase {
